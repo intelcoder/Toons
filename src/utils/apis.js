@@ -1,4 +1,7 @@
 import secret from 'app/config/secret'
+import {
+  ToastAndroid,
+} from 'react-native';
 import { createRequestUrl } from 'utils'
 
 const headers = {
@@ -24,14 +27,16 @@ export const fetchToken = async (id, pwd) => {
 export const getToonRequest = async (urlType, tokenDetail) => {
   const { token_type, access_token } = tokenDetail
   let requestUrl = createRequestUrl(urlType)
-  console.log(requestUrl)
   const fetchDetail = {
     method: 'GET',
     headers: {
       Authorization: token_type.toLowerCase() + ' ' + access_token,
     },
   }
-  console.log(requestUrl)
-  const data = await fetch('http://192.168.2.92:9966/webtoon', fetchDetail)
-  return data.json()
+  try{
+    const data = await fetch(requestUrl, fetchDetail);
+    return data.json()
+  }catch(e){
+    return ToastAndroid.show("Error occurred on fetching init data", ToastAndroid.LONG);
+  }
 }

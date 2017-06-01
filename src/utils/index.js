@@ -41,7 +41,7 @@ export const indexToweekday = (index) => {
 };
 
 
-export const createRequestUrl = (type, site, id = null, episode = null) => {
+export const createRequestUrl = (type, site = '', id = null, episode = null) => {
   const baseUrl = secret.baseUrl + site;
   if(type == urlTypes.LIST){
     return baseUrl;

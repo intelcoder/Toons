@@ -44,3 +44,16 @@ export const saveEpisodeImage = (toonId, episode) => {
       console.log(e,e.nativeEvent,'error occurend during saving images');
     })
 };
+
+export const saveThumbsToLocal = (webtoon) => {
+  return RNFetchBlob
+    .config({
+      path: dirs.DocumentDir + `/${webtoon.site}/${webtoon.toon_id}.jpg`,
+      appendExt: 'jpg',
+    })
+    .fetch('GET', webtoon.thumbnail_url, {})
+    .then((res) => {
+      webtoon.thumbnail_url = res.path();
+      return webtoon;
+    });
+};

@@ -19,9 +19,7 @@ import { bindActionCreators } from 'redux'
   }, dispatch)
 })
 class WebtoonScreen extends Component {
-  testInitCall = () => {}
   render() {
-    console.log(this.props)
     return (
       <View>
         <Text>Webtoon Screen</Text>
