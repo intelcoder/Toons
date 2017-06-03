@@ -7,5 +7,5 @@ import loginReducer from './loginReducer'
 
 export default combineReducers({
   nav: navReducer,
-  login: loginReducer
+  login: loginReducer,
 })

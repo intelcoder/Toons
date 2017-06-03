@@ -3,9 +3,9 @@
  */
 
 import moment from 'moment'
-import {loginTypes} from 'redux/types'
+import { loginTypes } from 'redux/types'
 
-const {LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL} = loginTypes
+const { LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL } = loginTypes
 
 const initState = {
   hasToken: false,
@@ -13,29 +13,28 @@ const initState = {
   tokenReceivedAt: null,
   status: null,
   tokenDetail: {},
-  error:''
-};
+  error: '',
+}
 
 export default (state = initState, action) => {
   if (action.type === LOGIN_REQUESTED) {
-    return Object.assign({}, state, {isFetching: true, error: ''})
+    return Object.assign({}, state, { isFetching: true, error: '' })
   } else if (action.type === LOGIN_SUCCESS) {
     return Object.assign({}, state, {
-        isFetching: false,
-        hasToken: true,
-        status: 'success',
-        tokenReceivedAt: moment().unix(),
-        tokenDetail: action.data,
-        error:''
-      }
-    )
+      isFetching: false,
+      hasToken: true,
+      status: 'success',
+      tokenReceivedAt: moment().unix(),
+      tokenDetail: action.data,
+      error: '',
+    })
   } else if (action.type === LOGIN_FAIL) {
     return Object.assign({}, state, {
       status: 'fail',
       isFetching: false,
-      error: action.error
+      error: action.error,
     })
   }
 
-  return state;
+  return state
 }

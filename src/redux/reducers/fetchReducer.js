@@ -4,8 +4,8 @@
 const initState = {
   isFetching: false,
   isFail: false,
-  data: []
-};
+  data: [],
+}
 
 /**
  * This reducer takes care of  network request
@@ -13,24 +13,23 @@ const initState = {
  * @param action
  * @returns {*}
  */
-export default (state = initState, action)=> {
-  if(action.type === "FETCH_DATA"){
-    return Object.assign({},state,{
-      isFetching:true,
-      isFail : false
-    });
-  }else if( action.type === "FETCH_DATA_SUCCESS"){
-    return Object.assign({},state,{
-      isFetching:false,
-      isFail : false,
-      data: action.data
+export default (state = initState, action) => {
+  if (action.type === 'FETCH_DATA') {
+    return Object.assign({}, state, {
+      isFetching: true,
+      isFail: false,
     })
-
-  }else if(action.type === "FETCH_DATA_FAILURE"){
-    return Object.assign({},state,{
-      isFetching:false,
-      isFail : true,
+  } else if (action.type === 'FETCH_DATA_SUCCESS') {
+    return Object.assign({}, state, {
+      isFetching: false,
+      isFail: false,
+      data: action.data,
+    })
+  } else if (action.type === 'FETCH_DATA_FAILURE') {
+    return Object.assign({}, state, {
+      isFetching: false,
+      isFail: true,
     })
   }
-  return state;
-};
+  return state
+}

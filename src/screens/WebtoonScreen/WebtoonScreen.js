@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import { View, Text, Button } from 'react-native'
 import {connect} from 'react-redux'
 import { bindActionCreators } from 'redux'
-
+import {requestReadPermission, requestWritePermission} from 'utils/permissionRequest';
 
 
 @connect((state) => ({
@@ -19,6 +19,11 @@ import { bindActionCreators } from 'redux'
   }, dispatch)
 })
 class WebtoonScreen extends Component {
+
+  componentDidMount() {
+    requestReadPermission();
+    requestWritePermission();
+  }
   render() {
     return (
       <View>
