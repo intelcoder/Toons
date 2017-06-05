@@ -9,12 +9,19 @@ import {
   select,
 } from 'redux-saga/effects'
 import { initTypes } from 'redux/types'
+import { extractValueFromObjArray } from 'utils'
 import { getToonRequest } from 'utils/apis'
 import { urlTypes, siteList } from 'models/data'
 import { defaultModel } from 'models/model'
 import { saveThumbsToLocal } from 'utils/saveImage'
-
-const { START_INIT } = initTypes
+const {
+  INIT_START,
+  INIT_SUCCESS,
+  INIT_FAIL,
+  INIT_FETCH_START,
+  INIT_IMAGE_SAVE_START,
+  INIT_WEBTOON_SAVE_START,
+} = initTypes
 
 const getLogin = state => state.login
 
@@ -23,19 +30,12 @@ const updateSite = webtoon => {
   return webtoon
 }
 
-async function saveInitLocal(webtoons) {
+async function saveImage(webtoons) {
   let updatedWebtoons
-  let sites = siteList.reduce((acc, site) => {
-    acc[site] = []
-    return acc
-  }, {})
-
-  //console.log('saveInitLocal',webtoons)
-
   try {
     //Update webtoon data and save thumbnail_url to local
     updatedWebtoons = webtoons.map(updateSite).map(saveThumbsToLocal)
-    updatedWebtoons = await Promise.all(updatedWebtoons)
+    return await Promise.all(updatedWebtoons)
   } catch (err) {
     return ToastAndroid.show(
       'Error occurred on saving images',
@@ -44,20 +44,50 @@ async function saveInitLocal(webtoons) {
   }
 }
 
+function saveWebtoonIntoLocal(webtoons) {
+  let sites = siteList.reduce((acc, site) => {
+    acc[site] = []
+    return acc
+  }, {})
+
+  const webtoonsBySite = webtoons.map(webtoon => {
+    sites[webtoon.site].push(webtoon)
+  })
+
+  const savePromises = Object.keys(sites)
+    .map(site => {
+      const toonids = extractValueFromObjArray(sites[site], 'toon_id')
+      defaultModel.save(site, toonids)
+      return sites[site].map(webtoon => {
+        const key = [site, webtoon.toon_id].join(':')
+        return defaultModel.save(key, webtoon)
+      })
+    })
+    .reduce((acc, promises) => {
+      return acc.concat(promises)
+    }, [])
+
+  return Promise.all(savePromises)
+}
+
 function* startInit(action) {
   try {
     const login = yield select(getLogin)
+    yield put({ type: INIT_FETCH_START })
     const result = yield call(getToonRequest, urlTypes.LIST, login.tokenDetail)
-    const saveResult = yield call(saveInitLocal, result)
+    yield put({ type: INIT_IMAGE_SAVE_START })
+    const webtoonsWithImagePath = yield call(saveImage, result)
+    yield put({ type: INIT_WEBTOON_SAVE_START })
+    const save = yield call(saveWebtoonIntoLocal, webtoonsWithImagePath)
+    yield put({ type: INIT_SUCCESS })
   } catch (e) {
+    yield put({ type: INIT_FAIL })
     console.log('error', e)
   }
-
-  //const webtoons = yield call(getToonRequest, )
 }
 
 function* watchInit() {
-  yield takeEvery(START_INIT, startInit)
+  yield takeEvery(INIT_START, startInit)
 }
 
 export default watchInit

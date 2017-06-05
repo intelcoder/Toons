@@ -5,16 +5,18 @@ import React, { Component } from 'react'
 import { View, Text, Button } from 'react-native'
 import {connect} from 'react-redux'
 import { bindActionCreators } from 'redux'
-import {requestReadPermission, requestWritePermission} from 'utils/permissionRequest';
+import {requestReadPermission, requestWritePermission} from 'utils/permissionRequest'
+import {initTypes} from 'redux/types'
 
 
 @connect((state) => ({
-  login: state.login
+  login: state.login,
+  init: state.init
 }),
 (dispatch) => {
   return bindActionCreators({
       startInit: () => ({
-        type: 'START_INIT'
+        type: initTypes.INIT_START
       })
   }, dispatch)
 })
@@ -25,6 +27,7 @@ class WebtoonScreen extends Component {
     requestWritePermission();
   }
   render() {
+   
     return (
       <View>
         <Text>Webtoon Screen</Text>
@@ -32,7 +35,14 @@ class WebtoonScreen extends Component {
           onPress={() => {
             this.props.startInit()
           }}
-          title="Move to home2"
+          title="Start init ~!!!!"
+        />
+
+          <Button
+          onPress={() => {
+            console.log('WebtoonScreen',this.props)
+          }}
+          title={this.props.init.status ? this.props.init.status : 'show me props' }
         />
       </View>
     )
