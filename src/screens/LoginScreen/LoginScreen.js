@@ -40,6 +40,7 @@ class LoginScreen extends Component {
   }
 
   render() {
+    console.log(this.props)
     const {status} = this.props.login
 
     return (
