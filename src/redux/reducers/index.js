@@ -9,5 +9,5 @@ import initReducer from './initReducer'
 export default combineReducers({
   nav: navReducer,
   login: loginReducer,
-  init: initReducer
+  init: initReducer,
 })
