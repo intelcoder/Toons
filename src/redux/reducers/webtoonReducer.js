@@ -10,6 +10,7 @@ const initState = {
 export default (state = initState, action) => {
   switch (action.type) {
     case 'SITE_CHANGED':
+      return { ...state, ...payload }
 
     case 'WEBTOON_SELECTED':
 

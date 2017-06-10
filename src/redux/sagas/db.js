@@ -1,7 +1,7 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 
 function* dbInteraction() {
-  yield takeLatest('login', fetchData)
+  yield takeLatest(LOGIN_REQUESTED, fetchData)
 }
 
 export default db

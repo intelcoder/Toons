@@ -1,5 +1,3 @@
-import webtoonsTypes from './webtoonsTypes'
-
-export { default as loginTypes } from './loginTypes'
-export { default as initTypes } from './initTypes.js'
-export { default as webtoonsTypes } from './webtoonsTypes.js'
+export * from './loginTypes'
+export * from './initTypes.js'
+export * from './webtoonsTypes'

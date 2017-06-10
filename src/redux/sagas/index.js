@@ -4,5 +4,5 @@ import init from './init'
 import webtoons from './webtoons'
 
 export default function* rootSaga() {
-  yield all([login(), init()])
+  yield all([login(), init(), webtoons])
 }

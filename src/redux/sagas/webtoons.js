@@ -1,30 +1,48 @@
 import { all, call, put, takeEvery, takeLatest } from 'redux-saga/effects'
-import webtoonTypes from 'redux/types/webtoonsTypes'
-const {
+import {
+  FETCH_WEBTOON_DB,
   SITE_CHANGED,
   WEBTOON_SELECTED,
   EPISODE_SELECTED,
   WEBTOON_UPDATED,
   EPISODE_UPDATED,
   TOON_IMAGES_UPDATED,
-} = webtoonTypes
+} from 'redux/types'
 
-console.log(
-  SITE_CHANGED,
-  WEBTOON_SELECTED,
-  EPISODE_SELECTED,
-  WEBTOON_UPDATED,
-  EPISODE_UPDATED,
-  TOON_IMAGES_UPDATED
-)
 function* fetchData(action) {
   if (action.site) {
     //update update site and try to fetch webtoons from db
   }
 }
 
-function* siteChanged() {
-  yield takeLatest(SITE_CHANGED, fetchData)
+const dbFetchWebtoon = async site => {
+  try {
+    const naverToonIds = await defaultModel.getByKey(site)
+    const naverToons = await defaultModel.getAllWebtoonInSite(
+      site,
+      naverToonIds
+    )
+  } catch (e) {
+    console.log('db site webtoon fetch fail')
+  }
+
+  return naverToons
+}
+
+function* fetchWebtoons(action) {
+  const { site } = action.payload
+  const webtoons = yield call(dbFetchWebtoon, site)
+  put({
+    type: SITE_CHANGED,
+    payload: {
+      site: site,
+      webtoons: webtoons,
+    },
+  })
+}
+
+function* fetchWebtoon() {
+  yield takeLatest(FETCH_WEBTOON_DB, fetchWebtoons)
 }
 
 function* webtoonSelected() {
@@ -47,7 +65,7 @@ function* toonImageUpdated() {
   yield takeLatest(TOON_IMAGES_UPDATED, fetchData)
 }
 export default all([
-  siteChanged(),
+  fetchWebtoon(),
   webtoonSelected(),
   episodeSelected(),
   webtoonsUpdated(),

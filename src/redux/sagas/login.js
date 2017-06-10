@@ -1,9 +1,7 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
-import { loginTypes } from '../types'
+import { LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL } from 'redux/types'
 import { fetchToken } from 'utils/apis'
 import { defaultModel } from 'models/model'
-
-const { LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL } = loginTypes
 
 function* fetchData(action) {
   try {

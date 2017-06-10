@@ -3,9 +3,7 @@
  */
 
 import moment from 'moment'
-import { loginTypes } from 'redux/types'
-
-const { LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL } = loginTypes
+import { LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL } from 'redux/types'
 
 const initState = {
   hasToken: false,

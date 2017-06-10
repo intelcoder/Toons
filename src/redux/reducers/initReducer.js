@@ -1,13 +1,11 @@
-import { initTypes } from 'redux/types'
-
-const {
+import {
   INIT_START,
   INIT_SUCCESS,
   INIT_FAIL,
   INIT_FETCH_START,
   INIT_IMAGE_SAVE_START,
   INIT_WEBTOON_SAVE_START,
-} = initTypes
+} from 'redux/types'
 
 const initState = {
   isInitializing: false,

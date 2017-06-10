@@ -6,8 +6,8 @@ import {connect} from 'react-redux'
 import { View, Text, Button } from 'react-native'
 import { bindActionCreators } from 'redux'
 
-import {loginReqeust} from 'app/redux/actions/loginActions'
-import Login from 'app/components/Login/Login'
+import {loginReqeust} from 'redux/actions'
+import Login from 'components/Login/Login'
 
 
 

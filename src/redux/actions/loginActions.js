@@ -1,10 +1,9 @@
 /**
  * Created by fiddlest on 2/27/2017.
  */
-import secret from '../../config/secret';
-import {loginTypes} from '../types'
+import secret from '../../config/secret'
+import { LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL } from '../types'
 
-const {LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL} = loginTypes
 /**
  * This action will check if user already requested token
  * If not it calls fetchToken function to  get token
@@ -16,56 +15,57 @@ export const loginReqeust = (id, pwd) => {
     type: LOGIN_REQUESTED,
     payload: {
       id: id,
-      pwd: pwd
-    }
+      pwd: pwd,
+    },
   }
-};
+}
 
 /**
  * This action will be fired when token successfully received
  * @param tokenInfo
  * @returns {{type: string, data: null}}
  */
-export const tokenReceived = (tokenInfo) => {
+export const tokenReceived = tokenInfo => {
   return {
     type: LOGIN_SUCCESS,
-    data: tokenInfo ? tokenInfo : null
+    data: tokenInfo ? tokenInfo : null,
   }
-};
+}
 
 /**
  * This action will be fired on request fail
  * @param err error msg from request
  * @returns {{type: string, error: *}}
  */
-export const requestFail = (err) => {
+export const requestFail = err => {
   return {
     type: LOGIN_FAIL,
-    error: err
+    error: err,
   }
-};
+}
 
 /**
  * This function calls requestToken, tokenReceived, and requestFail on different condition
  * @param requestDetail Fetch request detail( methods, headers, body }
  * @returns {function(*)}
  */
-const fetchToken = (requestDetail) => {
-  return (dispatch ) => {
-    dispatch(requestToken());
+const fetchToken = requestDetail => {
+  return dispatch => {
+    dispatch(requestToken())
     return fetch(secret.tokenUrl, requestDetail)
       .then(response => {
-        return response.json();
+        return response.json()
       })
       .then(response => {
-        if(response.error){
-          return dispatch(requestFail('Login Failed with: ' + response.error_description));
+        if (response.error) {
+          return dispatch(
+            requestFail('Login Failed with: ' + response.error_description)
+          )
         }
-        if(response) dispatch(tokenReceived(response));
-
+        if (response) dispatch(tokenReceived(response))
       })
       .catch(err => {
-        dispatch(requestFail(err));
+        dispatch(requestFail(err))
       })
   }
-};
+}

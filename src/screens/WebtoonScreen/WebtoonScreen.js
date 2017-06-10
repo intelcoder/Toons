@@ -6,9 +6,9 @@ import { View, Text, Button, AsyncStorage } from 'react-native'
 import {connect} from 'react-redux'
 import { bindActionCreators } from 'redux'
 import {requestReadPermission, requestWritePermission} from 'utils/permissionRequest'
-import {initTypes, webtoonsTypes} from 'redux/types'
+import {INIT_START, FETCH_WEBTOON_DB} from 'redux/types'
+import {siteUpdate} from 'redux/actions'
 import {defaultModel} from 'models/model'
-
 
 @connect((state) => ({
   login: state.login,
@@ -17,12 +17,9 @@ import {defaultModel} from 'models/model'
 (dispatch) => {
   return bindActionCreators({
       startInit: () => ({
-        type: initTypes.INIT_START
+        type: INIT_START
       }),
-      siteUpdate: (site) => ({
-        type: webtoonsTypes.SITE_UPDATED,
-        site: site
-      })
+      siteUpdate: siteUpdate
   }, dispatch)
 })
 class WebtoonScreen extends Component {
@@ -30,15 +27,16 @@ class WebtoonScreen extends Component {
   componentDidMount() {
     requestReadPermission()
     requestWritePermission()
-    
-    this.getSiteDataIfAvailable()
-
+    this.initOrFetchStart();
   }
-
-  getSiteDataIfAvailable = async () => {
+  initOrFetchStart = async () => {
     const naverToonIds = await defaultModel.getByKey('naver')
-    const naverToons = await defaultModel.getAllWebtoonInSite('naver', naverToonIds)
-    console.log(naverToons)
+    if(naverToonIds){
+       const naverToons = await defaultModel.getAllWebtoonInSite('naver', naverToonIds)
+       console.log(naverToons)
+    }else {
+      this.props.startInit()
+    }
   }
 
   render() {

@@ -8,21 +8,19 @@ import {
   all,
   select,
 } from 'redux-saga/effects'
-import { initTypes } from 'redux/types'
-import { extractValueFromObjArray } from 'utils'
-import { getToonRequest } from 'utils/apis'
-import { urlTypes, siteList } from 'models/data'
-import { defaultModel } from 'models/model'
-import { saveThumbsToLocal } from 'utils/saveImage'
-const {
+import {
   INIT_START,
   INIT_SUCCESS,
   INIT_FAIL,
   INIT_FETCH_START,
   INIT_IMAGE_SAVE_START,
   INIT_WEBTOON_SAVE_START,
-} = initTypes
-
+} from 'redux/types'
+import { extractValueFromObjArray } from 'utils'
+import { getToonRequest } from 'utils/apis'
+import { urlTypes, siteList } from 'models/data'
+import { defaultModel } from 'models/model'
+import { saveThumbsToLocal } from 'utils/saveImage'
 const getLogin = state => state.login
 
 const updateSite = webtoon => {
