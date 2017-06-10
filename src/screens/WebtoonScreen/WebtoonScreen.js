@@ -30,15 +30,16 @@ class WebtoonScreen extends Component {
   componentDidMount() {
     requestReadPermission()
     requestWritePermission()
-    
     this.getSiteDataIfAvailable()
-
   }
 
   getSiteDataIfAvailable = async () => {
     const naverToonIds = await defaultModel.getByKey('naver')
-    const naverToons = await defaultModel.getAllWebtoonInSite('naver', naverToonIds)
-    console.log(naverToons)
+    if(naverToonIds){
+       const naverToons = await defaultModel.getAllWebtoonInSite('naver', naverToonIds)
+       console.log(naverToons)
+    }
+   
   }
 
   render() {
@@ -51,7 +52,6 @@ class WebtoonScreen extends Component {
           }}
           title="Start init ~!!!!"
         />
-
           <Button
           onPress={() => {
             console.log('WebtoonScreen',this.props)
