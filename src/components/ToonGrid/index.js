@@ -5,14 +5,14 @@
 import React, { Component, PropTypes } from 'react'
 import { View, Text, Image, StyleSheet, ListView, Animated } from 'react-native'
 
-import ToonCard from 'components/ToonCard/ToonCard'
+import ToonCard from 'components/ToonCard'
 
 export default class ToonGrid extends Component {
   constructor(props) {
     super(props)
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 })
     this.state = {
-      dataSource: ds.cloneWithRows(this.props.webtoonList),
+      dataSource: ds.cloneWithRows(this.props.webtoons),
       fadeIn: new Animated.Value(0),
     }
     this.fadeIn = Animated.timing(this.state.fadeIn, {
@@ -27,12 +27,12 @@ export default class ToonGrid extends Component {
         fadeIn: new Animated.Value(0),
       })
     }
-    if (this.props.webtoonList !== nextProps.webtoonList) {
+    if (this.props.webtoons !== nextProps.webtoons) {
       const ds = new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 != r2,
       })
       this.setState({
-        dataSource: ds.cloneWithRows(nextProps.webtoonList),
+        dataSource: ds.cloneWithRows(nextProps.webtoons),
       })
       setTimeout(() => {
         this.fadeIn.start()
@@ -72,14 +72,14 @@ export default class ToonGrid extends Component {
 }
 
 ToonGrid.propTypes = {
-  webtoonList: PropTypes.array,
+  webtoons: PropTypes.array,
   width: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
   handleCardClick: PropTypes.func,
 }
 
 ToonGrid.defaultProps = {
-  webtoonList: [
+  webtoons: [
     {
       thumbnail_url: '',
       title: '',
