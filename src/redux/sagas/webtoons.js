@@ -1,15 +1,13 @@
 import { all, call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import {
-  FETCH_WEBTOON_DB,
-  SITE_CHANGED,
+  SITE_UPDATE,
   WEBTOON_SELECTED,
   EPISODE_SELECTED,
   WEBTOON_UPDATED,
   EPISODE_UPDATED,
   TOON_IMAGES_UPDATED,
 } from 'redux/types'
-import { siteChanged } from 'redux/actions'
-
+import { siteUpdated } from 'redux/actions'
 import { defaultModel } from 'models/model'
 
 function* fetchData(action) {
@@ -34,11 +32,11 @@ const dbFetchWebtoon = async site => {
 function* fetchWebtoons(action) {
   const { site } = action
   const webtoons = yield call(dbFetchWebtoon, site)
-  yield put(siteChanged(site, webtoons))
+  yield put(siteUpdated(site, webtoons))
 }
 
 function* fetchWebtoon() {
-  yield takeLatest(FETCH_WEBTOON_DB, fetchWebtoons)
+  yield takeLatest(SITE_UPDATE, fetchWebtoons)
 }
 
 function* webtoonSelected() {
