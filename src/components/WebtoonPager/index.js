@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import { View, StyleSheet, ToolbarAndroid, AsyncStorage } from 'react-native'
 import { TabViewAnimated, TabBar } from 'react-native-tab-view'
 import { bindActionCreators } from 'redux'
-import {upateSite} from 'redux/actions'
+import {updateSite} from 'redux/actions'
 import ToonGird from 'components/ToonGrid'
 import { siteList, pagerRoutes, weekdaysEng } from 'models/data'
 import { defaultModel } from 'models/model'
@@ -21,7 +21,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 }),
 (dispatch) => {
   return bindActionCreators({
-      upateSite: upateSite
+      updateSite: updateSite
   }, dispatch)
 })
 class WebtoonPager extends Component {
@@ -45,10 +45,10 @@ class WebtoonPager extends Component {
       this.setState({
         favoriteSelectActive: false,
       })
-      this.props.fetchWebtoonFromDb(actionTitle)
+      this.props.updateSite(actionTitle)
     }
     if (actionTitle === 'like') {
-      const { webtoons } = this.props
+      const { webtoons, site } = this.props
       const favorites = webtoons
         .filter(w => w.site == site && w.favorite)
         .map(w => w.toon_id)
@@ -74,7 +74,6 @@ class WebtoonPager extends Component {
     { favoriteSelectActive },
     { webtoons, width, isFetching }
   ) => {
-    console.log(webtoons)
     return ({ index }) => {
       return (
         <ToonGird
@@ -90,12 +89,16 @@ class WebtoonPager extends Component {
       )
     }
   }
+  componentWillReceiveProps(nextProps){
+    console.log('will', nextProps)
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const {site} = this.props
+    const {site, webtoons} = this.props
     const { favoriteSelectActive } = this.state
     if (
       site !== nextProps.site ||
+      webtoons !== nextProps.webtoons ||
       favoriteSelectActive !== nextState.favoriteSelectActive
     ) {
       return true
@@ -127,7 +130,6 @@ class WebtoonPager extends Component {
   }
   render() {
     const {site, webtoons} = this.props
-    console.log("pager", webtoons)
     return (
       <View
         style={{
