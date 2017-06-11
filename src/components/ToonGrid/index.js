@@ -10,23 +10,14 @@ import ToonCard from 'components/ToonCard'
 export default class ToonGrid extends Component {
   constructor(props) {
     super(props)
+   
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2 })
     this.state = {
       dataSource: ds.cloneWithRows(this.props.webtoons),
-      fadeIn: new Animated.Value(0),
     }
-    this.fadeIn = Animated.timing(this.state.fadeIn, {
-      toValue: 1,
-      duration: 0.6,
-    })
   }
 
   componentWillUpdate(nextProps) {
-    if (this.props.index !== nextProps.index) {
-      this.setState({
-        fadeIn: new Animated.Value(0),
-      })
-    }
     if (this.props.webtoons !== nextProps.webtoons) {
       const ds = new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 != r2,
@@ -34,20 +25,14 @@ export default class ToonGrid extends Component {
       this.setState({
         dataSource: ds.cloneWithRows(nextProps.webtoons),
       })
-      setTimeout(() => {
-        this.fadeIn.start()
-      }, 1000)
+      
     }
   }
 
   render() {
     const { width, handleCardClick, favoriteSelectActive } = this.props
     return (
-      <Animated.View
-        style={{
-          opacity: this.state.fadeIn,
-        }}
-      >
+      <View>
         <ListView
           enableEmptySections={true}
           dataSource={this.state.dataSource}
@@ -66,7 +51,7 @@ export default class ToonGrid extends Component {
             />
           )}
         />
-      </Animated.View>
+      </View>
     )
   }
 }
