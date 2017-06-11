@@ -1,7 +1,7 @@
 import { createReducer } from 'utils/reduxGenerator'
 import { siteList } from 'models/data'
 import {
-  SITE_CHANGED,
+  SITE_UPDATE_SUCCESS,
   WEBTOON_SELECTED,
   EPISODE_SELECTED,
   WEBTOON_UPDATED,
@@ -24,7 +24,7 @@ const initState = {
 }
 
 const webtoonReducer = createReducer(initState, {
-  [SITE_CHANGED](state, action) {
+  [SITE_UPDATE_SUCCESS](state, action) {
     const { site, webtoons } = action
     return {
       ...state,
