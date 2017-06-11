@@ -26,7 +26,13 @@ const initState = {
 const webtoonReducer = createReducer(initState, {
   [SITE_CHANGED](state, action) {
     const { site, webtoons } = action
-    return { ...state, webtoons: { ...state.webtoons, [site]: [...webtoons] } }
+    return {
+      ...state,
+      webtoons: {
+        ...state.webtoons,
+        [site]: [...webtoons],
+      },
+    }
   },
 })
 

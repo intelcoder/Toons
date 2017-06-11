@@ -8,6 +8,7 @@ import {
   EPISODE_UPDATED,
   TOON_IMAGES_UPDATED,
 } from 'redux/types'
+import { siteChanged } from 'redux/actions'
 
 import { defaultModel } from 'models/model'
 
@@ -33,14 +34,7 @@ const dbFetchWebtoon = async site => {
 function* fetchWebtoons(action) {
   const { site } = action
   const webtoons = yield call(dbFetchWebtoon, site)
-  console.log(webtoons)
-  put({
-    type: SITE_CHANGED,
-    payload: {
-      site: site,
-      webtoons: webtoons,
-    },
-  })
+  yield put(siteChanged(site, webtoons))
 }
 
 function* fetchWebtoon() {
