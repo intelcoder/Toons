@@ -1,26 +1,33 @@
+import { createReducer } from 'utils/reduxGenerator'
+import { siteList } from 'models/data'
+import {
+  SITE_CHANGED,
+  WEBTOON_SELECTED,
+  EPISODE_SELECTED,
+  WEBTOON_UPDATED,
+  EPISODE_UPDATED,
+  TOON_IMAGES_UPDATED,
+} from 'redux/types'
+
+const webtoonObj = siteList.reduce((acc, site) => {
+  acc[site] = []
+  return acc
+}, {})
+
 const initState = {
   site: 'naver',
   selectedWebtoon: '',
   selectedEpisodes: '',
-  webtoons: [],
+  webtoons: webtoonObj,
   episodes: [],
   toonImages: [],
 }
 
-export default (state = initState, action) => {
-  switch (action.type) {
-    case 'SITE_CHANGED':
-      return { ...state, ...payload }
+const webtoonReducer = createReducer(initState, {
+  [SITE_CHANGED](state, action) {
+    const { site, webtoons } = action
+    return { ...state, webtoons: { ...state.webtoons, [site]: [...webtoons] } }
+  },
+})
 
-    case 'WEBTOON_SELECTED':
-
-    case 'EPISODE_SELECTED':
-
-    case 'WEBTOON_UPDATED':
-
-    case 'EPISODE_UPDATED':
-
-    case 'TOON_IMAGES':
-  }
-  return state
-}
+export default webtoonReducer

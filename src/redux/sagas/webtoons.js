@@ -9,6 +9,8 @@ import {
   TOON_IMAGES_UPDATED,
 } from 'redux/types'
 
+import { defaultModel } from 'models/model'
+
 function* fetchData(action) {
   if (action.site) {
     //update update site and try to fetch webtoons from db
@@ -22,16 +24,16 @@ const dbFetchWebtoon = async site => {
       site,
       naverToonIds
     )
+    return naverToons
   } catch (e) {
-    console.log('db site webtoon fetch fail')
+    console.log('db site webtoon fetch fail ', e)
   }
-
-  return naverToons
 }
 
 function* fetchWebtoons(action) {
-  const { site } = action.payload
+  const { site } = action
   const webtoons = yield call(dbFetchWebtoon, site)
+  console.log(webtoons)
   put({
     type: SITE_CHANGED,
     payload: {

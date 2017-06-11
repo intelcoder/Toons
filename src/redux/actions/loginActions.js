@@ -2,7 +2,7 @@
  * Created by fiddlest on 2/27/2017.
  */
 import secret from '../../config/secret'
-import { LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL } from '../types'
+import { LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL } from 'redux/types'
 
 /**
  * This action will check if user already requested token

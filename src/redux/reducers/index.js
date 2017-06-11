@@ -5,9 +5,11 @@ import { combineReducers } from 'redux'
 import navReducer from './navigator'
 import loginReducer from './loginReducer'
 import initReducer from './initReducer'
+import webtoonReducer from './webtoonReducer'
 
 export default combineReducers({
   nav: navReducer,
   login: loginReducer,
   init: initReducer,
+  webtoon: webtoonReducer,
 })

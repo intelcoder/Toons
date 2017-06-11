@@ -1,8 +1,4 @@
-import { SITE_CHANGED } from 'redux/types'
+import { makeActionCreator } from 'utils/reduxGenerator'
+import { FETCH_WEBTOON_DB } from 'redux/types'
 
-export const siteUpdate = payload => {
-  return {
-    type: SITE_CHANGED,
-    payload: payload,
-  }
-}
+export const fetchWebtoonFromDb = makeActionCreator(FETCH_WEBTOON_DB, 'site')

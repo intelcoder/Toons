@@ -1,3 +1,5 @@
+import { createReducer } from 'utils/reduxGenerator'
+
 import {
   INIT_START,
   INIT_SUCCESS,
@@ -15,40 +17,46 @@ const initState = {
 const initReducer = (state = initState, action) => {
   switch (action.type) {
     case INIT_START:
-      return Object.assign({}, initState, {
+      return {
+        ...initState,
         isInitializing: true,
         status: INIT_START,
-      })
+      }
 
     case INIT_FETCH_START:
-      return Object.assign({}, initState, {
+      return {
+        ...initState,
         isInitializing: true,
         status: INIT_FETCH_START,
-      })
+      }
 
     case INIT_IMAGE_SAVE_START:
-      return Object.assign({}, initState, {
+      return {
+        ...initState,
         isInitializing: true,
         status: INIT_IMAGE_SAVE_START,
-      })
+      }
 
     case INIT_WEBTOON_SAVE_START:
-      return Object.assign({}, initState, {
+      return {
+        ...initState,
         isInitializing: true,
         status: INIT_WEBTOON_SAVE_START,
-      })
+      }
 
     case INIT_SUCCESS:
-      return Object.assign({}, initState, {
+      return {
+        ...initState,
         isInitializing: false,
         status: INIT_SUCCESS,
-      })
+      }
 
     case INIT_FAIL:
-      return Object.assign({}, initState, {
+      return {
+        ...initState,
         isInitializing: false,
         status: INIT_FAIL,
-      })
+      }
   }
   return state
 }
