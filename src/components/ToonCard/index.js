@@ -44,7 +44,6 @@ export default class ToonCard extends Component {
       height,
       favoriteSelectActive,
     } = this.props
-
     return (
       <TouchableOpacity
         onPress={this.onClickHandler}
@@ -71,7 +70,12 @@ export default class ToonCard extends Component {
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.title}>{title}</Text>
+          <Text
+          style={{flex:1}}
+           numberOfLines={1}
+           style={styles.title}
+        
+           >{title}</Text>
           <Text style={styles.rating}>{rating}</Text>
           <Text style={styles.author}>{author}</Text>
         </View>
@@ -97,7 +101,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     backgroundColor: '#f7f8f9',
-    paddingBottom: 5,
+    paddingBottom: 5,   
   },
   title: {
     marginTop: 3,
