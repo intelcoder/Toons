@@ -14,51 +14,49 @@ import Model, { defaultModel } from ' models/model'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import { siteList, pagerRoutes } from 'model/data'
 
+
+@connect((state) => ({
+  webtoons: state.webtoon.webtoons,
+  site: state.webtoon.site
+},
+(dispatch) => {
+  return bindActionCreators({
+      fetchWebtoonFromDb: fetchWebtoonFromDb
+  }, dispatch)
+}))
 class WebtoonPager extends Component {
   state = {
     index: 0,
     routes: pagerRoutes,
-    site: this.props.site,
-    webtoonList: [],
     toolbarActions: [],
     favoriteSelectActive: false,
     favoriteSelected: [],
   }
   _onActionSelected = position => {
+    const {site} = this.props
     const actionTitle = toolbarActions[position].title.toLowerCase()
-    if (siteList.indexOf(actionTitle) > -1 && this.state.site !== actionTitle) {
+    if (siteList.indexOf(actionTitle) > -1 && site !== actionTitle) {
       //Turn off favorite selection mode
       this.setState({
         favoriteSelectActive: false,
       })
-      return this.updateWebtoonList(actionTitle)
+      this.props.fetchWebtoonFromDb(actionTitle)
     }
     if (actionTitle === 'like') {
-      const { webtoonList, site } = this.state
-      const favorites = webtoonList
+      const { webtoons } = this.props
+      const favorites = webtoons
         .filter(w => w.site == site && w.favorite)
         .map(w => w.toon_id)
       if (this.state.favoriteSelectActive) {
         //need to update favorite state on local and server
       }
       this.setState({
-        favoriteSelected: this.state.favoriteSelected.concat(favorites),
+        favoriteSelected: [this.state.favoriteSelecte, ...favorites],
         favoriteSelectActive: !this.state.favoriteSelectActive,
       })
     }
   }
-  updateWebtoonList = async site => {
-    try {
-      const webtoonIds = await defaultModel.getByKey(site)
-      const webtoons = await defaultModel.getAllWebtoonInSite(site, webtoonIds)
-      this.setState({
-        site: site,
-        webtoonList: webtoons,
-      })
-    } catch (e) {
-      console.log('updateWebtoonList error', e)
-    }
-  }
+ 
   _handleChangeTab = index => {
     this.setState({
       index,
@@ -68,14 +66,14 @@ class WebtoonPager extends Component {
     return <TabBar {...props} />
   }
   _renderScene = (
-    { webtoonList, favoriteSelectActive },
-    { width, isFetching }
+    { favoriteSelectActive },
+    { webtoons, width, isFetching }
   ) => {
     return ({ index }) => {
       return (
         <ToonGird
           index={index}
-          webtoonList={webtoonList.filter(
+          webtoons={webtoons.filter(
             webtoon => webtoon.weekday == weekdays[index]
           )}
           width={width}
@@ -86,26 +84,24 @@ class WebtoonPager extends Component {
       )
     }
   }
+
   shouldComponentUpdate(nextProps, nextState) {
-    const { webtoonList, site, favoriteSelectActive } = this.state
+    const {site} = this.props
+    const { favoriteSelectActive } = this.state
     if (
-      webtoonList !== nextState.webtoonList ||
-      site !== nextState.site ||
+      site !== nextProps.site ||
       favoriteSelectActive !== nextState.favoriteSelectActive
     ) {
       return true
     }
     return false
   }
-  componentDidMount() {
-    //this.setActions(this.state.site);
-    this.updateWebtoonList(this.props.site)
-  }
+
   handleCardClick = (toonId): void => {
     const { favoriteSelectActive } = this.state
     if (!favoriteSelectActive && toonId) {
       Actions.episode({
-        site: this.state.site,
+        site: this.props.site,
         toonId: toonId,
       })
     } else if (favoriteSelectActive && toonId) {
@@ -127,7 +123,7 @@ class WebtoonPager extends Component {
     })
   }
   render() {
-    const site = this.state.site
+    const {site} = this.props
     return (
       <View
         style={{
@@ -145,14 +141,16 @@ class WebtoonPager extends Component {
           subtitleColor="white"
           actions={toolbarActions}
         />
-        {this.state.webtoonList.length > 0 &&
+        {
+          this.state.webtoons.length > 0 &&
           <TabViewAnimated
             style={styles.container}
             navigationState={this.state}
             renderScene={this._renderScene(this.state, this.props)}
             renderHeader={this._renderHeader}
             onRequestChangeTab={this._handleChangeTab}
-          />}
+          />
+        }
 
       </View>
     )

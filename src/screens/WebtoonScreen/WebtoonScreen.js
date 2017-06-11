@@ -7,7 +7,7 @@ import {connect} from 'react-redux'
 import { bindActionCreators } from 'redux'
 import {requestReadPermission, requestWritePermission} from 'utils/permissionRequest'
 import {INIT_START, FETCH_WEBTOON_DB} from 'redux/types'
-import {siteUpdate} from 'redux/actions'
+import {fetchWebtoonFromDb, initStart} from 'redux/actions'
 import {defaultModel} from 'models/model'
 
 @connect((state) => ({
@@ -16,10 +16,8 @@ import {defaultModel} from 'models/model'
 }),
 (dispatch) => {
   return bindActionCreators({
-      startInit: () => ({
-        type: INIT_START
-      }),
-      siteUpdate: siteUpdate
+      startInit: initStart,
+      fetchWebtoonFromDb: fetchWebtoonFromDb
   }, dispatch)
 })
 class WebtoonScreen extends Component {
@@ -30,10 +28,10 @@ class WebtoonScreen extends Component {
     this.initOrFetchStart();
   }
   initOrFetchStart = async () => {
+    //Later on naver will be fetched from user config
     const naverToonIds = await defaultModel.getByKey('naver')
     if(naverToonIds){
-       const naverToons = await defaultModel.getAllWebtoonInSite('naver', naverToonIds)
-       console.log(naverToons)
+       this.props.fetchWebtoonFromDb('naver')
     }else {
       this.props.startInit()
     }
