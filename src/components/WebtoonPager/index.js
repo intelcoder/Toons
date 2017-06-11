@@ -2,28 +2,28 @@
  * Created by fiddlest on 3/2/2017.
  */
 import React, { Component } from 'react'
+import {connect} from 'react-redux'
 import { View, StyleSheet, ToolbarAndroid, AsyncStorage } from 'react-native'
 import { TabViewAnimated, TabBar } from 'react-native-tab-view'
-import { Actions } from 'react-native-router-flux'
+import { bindActionCreators } from 'redux'
+import {upateSite} from 'redux/actions'
 import ToonGird from 'components/ToonGrid'
-import siteModel from 'model/siteModel'
-import { weekdays } from 'utils/index'
-
-import Model, { defaultModel } from ' models/model'
+import { siteList, pagerRoutes, weekdaysEng } from 'models/data'
+import { defaultModel } from 'models/model'
 
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
-import { siteList, pagerRoutes } from 'model/data'
+
 
 
 @connect((state) => ({
-  webtoons: state.webtoon.webtoons,
+  webtoons: state.webtoon.webtoons[state.webtoon.site],
   site: state.webtoon.site
-},
+}),
 (dispatch) => {
   return bindActionCreators({
-      fetchWebtoonFromDb: fetchWebtoonFromDb
+      upateSite: upateSite
   }, dispatch)
-}))
+})
 class WebtoonPager extends Component {
   state = {
     index: 0,
@@ -31,6 +31,11 @@ class WebtoonPager extends Component {
     toolbarActions: [],
     favoriteSelectActive: false,
     favoriteSelected: [],
+  }
+
+  constructor(props){
+    super(props)
+    console.log(this.props)
   }
   _onActionSelected = position => {
     const {site} = this.props
@@ -69,12 +74,13 @@ class WebtoonPager extends Component {
     { favoriteSelectActive },
     { webtoons, width, isFetching }
   ) => {
+    console.log(webtoons)
     return ({ index }) => {
       return (
         <ToonGird
           index={index}
           webtoons={webtoons.filter(
-            webtoon => webtoon.weekday == weekdays[index]
+            webtoon => webtoon.weekday == weekdaysEng[index]
           )}
           width={width}
           favoriteSelectActive={favoriteSelectActive}
@@ -97,13 +103,10 @@ class WebtoonPager extends Component {
     return false
   }
 
-  handleCardClick = (toonId): void => {
+  handleCardClick = (toonId) => {
     const { favoriteSelectActive } = this.state
     if (!favoriteSelectActive && toonId) {
-      Actions.episode({
-        site: this.props.site,
-        toonId: toonId,
-      })
+   
     } else if (favoriteSelectActive && toonId) {
       const index = this.state.favoriteSelected.indexOf(toonId)
       let selectedIds = []
@@ -123,7 +126,8 @@ class WebtoonPager extends Component {
     })
   }
   render() {
-    const {site} = this.props
+    const {site, webtoons} = this.props
+    console.log("pager", webtoons)
     return (
       <View
         style={{
@@ -134,7 +138,7 @@ class WebtoonPager extends Component {
           title={site.toUpperCase()}
           style={{
             height: 56,
-            backgroundColor: siteModel[site.toLowerCase()].backgroundColor,
+            backgroundColor: toolbarData[site.toLowerCase()].backgroundColor,
           }}
           onActionSelected={this._onActionSelected}
           titleColor="white"
@@ -142,7 +146,7 @@ class WebtoonPager extends Component {
           actions={toolbarActions}
         />
         {
-          this.state.webtoons.length > 0 &&
+          webtoons.length > 0 &&
           <TabViewAnimated
             style={styles.container}
             navigationState={this.state}
@@ -181,3 +185,22 @@ const toolbarActions = [
     iconName: 'favorite',
   },
 ]
+
+const toolbarData = {
+  naver: {
+    site: 'Naver',
+    backgroundColor: '#2DB400'
+  },
+  daum: {
+    site: 'Daum',
+    backgroundColor: '#E83D3D'
+  },
+  rezin: {
+    site: 'Rezin',
+    backgroundColor: '#E50020'
+  },
+  kakao: {
+    site: 'Kakao',
+    backgroundColor: '#F0CC18'
+  }
+}
