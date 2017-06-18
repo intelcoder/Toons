@@ -1,7 +1,5 @@
 import secret from 'app/config/secret'
-import {
-  ToastAndroid,
-} from 'react-native';
+import { ToastAndroid } from 'react-native'
 import { createRequestUrl } from 'utils'
 
 const headers = {
@@ -24,19 +22,21 @@ export const fetchToken = async (id, pwd) => {
   return data.json()
 }
 
-export const getToonRequest = async (urlType, tokenDetail) => {
+export const getToonRequest = async (requestUrl, tokenDetail) => {
   const { token_type, access_token } = tokenDetail
-  let requestUrl = createRequestUrl(urlType)
   const fetchDetail = {
     method: 'GET',
     headers: {
       Authorization: token_type.toLowerCase() + ' ' + access_token,
     },
   }
-  try{
-    const data = await fetch(requestUrl, fetchDetail);
+  try {
+    const data = await fetch(requestUrl, fetchDetail)
     return data.json()
-  }catch(e){
-    return ToastAndroid.show("Error occurred on fetching init data", ToastAndroid.LONG);
+  } catch (e) {
+    return ToastAndroid.show(
+      `Error occurred on fetching ${urlType} data`,
+      ToastAndroid.LONG
+    )
   }
 }
