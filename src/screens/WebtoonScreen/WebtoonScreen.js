@@ -62,6 +62,7 @@ class WebtoonScreen extends Component {
       <View style={{flex: 1}}>
         <WebtoonPager 
           width={this.state.width}
+          navigation={this.props.navigation}
         />
       </View>
     )
