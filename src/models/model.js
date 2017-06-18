@@ -19,7 +19,8 @@ const model = () => {
   return {
     save: save(state),
     getByKey: getByKey(state),
-    getAllWebtoonInSite: getAllWebtoonInSite,
+    getAllWithKeys: getAllWithKeys,
+    setItems: setItems(state),
   }
 }
 
@@ -45,15 +46,42 @@ const getByKey = state => {
   }
 }
 
+//[['key', 'value']]
+const setItems = state => {
+  return async (items, name = '') => {
+    try {
+      const stringifyItems = items.map(item => {
+        return [item[0], JSON.stringify(item[1])]
+      })
+      return await AsyncStorage.multiSet(stringifyItems)
+    } catch (e) {
+      console.log('Set All fail' + name + ' ' + e)
+    }
+  }
+}
+
 const getAllWebtoonInSite = async (site, webtoonIds) => {
   const pWebtoons = webtoonIds.map(webtoonId => {
     const key = [site, webtoonId].join(':')
-    return model().getByKey(key)
+    return defaultModel.getByKey(key)
   })
   try {
     return await Promise.all(pWebtoons)
   } catch (e) {
     console.log('getAllWebtoonInSite error ', e)
+  }
+}
+
+const getAllWithKeys = async keys => {
+  if (keys) {
+    const items = keys.map(key => {
+      return defaultModel.getByKey(key)
+    })
+    try {
+      return await Promise.all(items)
+    } catch (e) {
+      console.log('error occurred getAllWithKeys', e)
+    }
   }
 }
 
