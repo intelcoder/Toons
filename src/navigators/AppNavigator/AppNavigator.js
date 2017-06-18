@@ -12,6 +12,7 @@ import {
 import HomeScreen from 'Toons/src/screens/HomeScreen/HomeScreen'
 import WebtoonScreen from 'Toons/src/screens/WebtoonScreen/WebtoonScreen'
 import LoginScreen from 'Toons/src/screens/LoginScreen/LoginScreen'
+import EpisodeScreen from 'Toons/src/screens/EpisodeScreen/EpisodeScreen'
 
 export const AppNavigator = StackNavigator(
   {
@@ -23,6 +24,9 @@ export const AppNavigator = StackNavigator(
     },
     Login: {
       screen: LoginScreen,
+    },
+    Episode: {
+      screen: EpisodeScreen,
     },
   },
   {
