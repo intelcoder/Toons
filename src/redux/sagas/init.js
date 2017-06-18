@@ -1,5 +1,5 @@
 import { ToastAndroid } from 'react-native'
-
+import { createRequestUrl } from 'utils'
 import {
   call,
   put,
@@ -72,7 +72,8 @@ function* startInit(action) {
   try {
     const login = yield select(getLogin)
     yield put({ type: INIT_FETCH_START })
-    const result = yield call(getToonRequest, urlTypes.LIST, login.tokenDetail)
+    const requestUrl = createRequestUrl(urlTypes.List)
+    const result = yield call(getToonRequest, requestUrl, login.tokenDetail)
     yield put({ type: INIT_IMAGE_SAVE_START })
     const webtoonsWithImagePath = yield call(saveImage, result)
     yield put({ type: INIT_WEBTOON_SAVE_START })
