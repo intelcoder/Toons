@@ -53,17 +53,12 @@ export const indexToweekday = index => {
   }
 }
 
-export const createRequestUrl = (
-  type,
-  site = '',
-  id = null,
-  episode = null
-) => {
-  const baseUrl = secret.baseUrl + site
+export const createRequestUrl = (type, id = null, episode = null) => {
+  const baseUrl = secret.baseUrl
   if (type == urlTypes.LIST) {
     return baseUrl
   } else if (type == urlTypes.EPISODE) {
-    return baseUrl + `/${id}/episode`
+    return baseUrl + `${id}/episode`
   } else if (type == urlTypes.TOONIMAGE) {
     return baseUrl + `${id}/episode/${episode}/toon`
   }
