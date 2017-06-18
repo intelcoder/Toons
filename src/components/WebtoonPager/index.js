@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import { View, StyleSheet, ToolbarAndroid, AsyncStorage } from 'react-native'
 import { TabViewAnimated, TabBar } from 'react-native-tab-view'
 import { bindActionCreators } from 'redux'
-import {updateSite} from 'redux/actions'
+import {updateSite, setWebtoonId} from 'redux/actions'
 import ToonGird from 'components/ToonGrid'
 import { siteList, pagerRoutes, weekdaysEng } from 'models/data'
 import { defaultModel } from 'models/model'
@@ -21,7 +21,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 }),
 (dispatch) => {
   return bindActionCreators({
-      updateSite: updateSite
+      updateSite: updateSite,
+      setWebtoonId: setWebtoonId
   }, dispatch)
 })
 class WebtoonPager extends Component {
@@ -35,7 +36,7 @@ class WebtoonPager extends Component {
 
   constructor(props){
     super(props)
-    console.log(this.props)
+  
   }
   _onActionSelected = position => {
     const {site} = this.props
@@ -109,12 +110,15 @@ class WebtoonPager extends Component {
   handleCardClick = (toonId) => {
     const { favoriteSelectActive } = this.state
     if (!favoriteSelectActive && toonId) {
-   
+     this.props.setWebtoonId(toonId)
+     this.props.navigation.navigate('Episode')
+    
     } else if (favoriteSelectActive && toonId) {
       const index = this.state.favoriteSelected.indexOf(toonId)
       let selectedIds = []
       if (index < 0) selectedIds = this.state.favoriteSelected.concat(toonId)
       else selectedIds = this.state.favoriteSelected.filter(id => id !== toonId)
+    
       this.setState({
         favoriteSelected: selectedIds,
       })
