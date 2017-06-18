@@ -7,6 +7,7 @@ import {
   WEBTOON_UPDATED,
   EPISODE_UPDATED,
   TOON_IMAGES_UPDATED,
+  GET_EPISODES_DB_SUCCESS,
 } from 'redux/types'
 
 const webtoonObj = siteList.reduce((acc, site) => {
@@ -33,6 +34,20 @@ const webtoonReducer = createReducer(initState, {
         ...state.webtoons,
         [site]: [...webtoons],
       },
+    }
+  },
+  [GET_EPISODES_DB_SUCCESS](state, action) {
+    const { episodes } = action
+    return {
+      ...state,
+      episodes: episodes,
+    }
+  },
+  [WEBTOON_SELECTED](state, action) {
+    const { toonId } = action
+    return {
+      ...state,
+      selectedWebtoon: toonId,
     }
   },
 })
