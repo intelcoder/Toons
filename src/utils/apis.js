@@ -35,7 +35,7 @@ export const getToonRequest = async (requestUrl, tokenDetail) => {
     return data.json()
   } catch (e) {
     return ToastAndroid.show(
-      `Error occurred on fetching ${urlType} data`,
+      `Error occurred on fetching ${requestUrl} data`,
       ToastAndroid.LONG
     )
   }
