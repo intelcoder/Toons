@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import difference from 'lodash.difference'
 
-//import EpisodeList from 'components/EpisodeList'
+import EpisodeList from 'components/EpisodeList'
 import {createSelector} from 'reselect'
 import secret from 'config/secret'
 import { defaultModel } from 'models/model'
@@ -30,13 +30,9 @@ import { getEpisodesDb, getEpisodesApi } from 'redux/actions'
   }, dispatch)
 })
 export default class EpisodePage extends Component {
-  state = {
-    episodeList: [],
-  }
 
   //site:pk:ep - list of episode
   componentDidMount() {
-    console.log(this.props)
     this.onLoad()
   }
 
@@ -61,7 +57,6 @@ export default class EpisodePage extends Component {
   handleClick = episode => {
     return () => {
       const { toonId } = this.props
-    
     }
   }
   getContents = episodes => {
@@ -69,25 +64,35 @@ export default class EpisodePage extends Component {
       episodeList: episodes,
     })
   }
-  render() {
-    const { width, height } = this.props
-    return (
-      <View
-        style={{
-          flex: 1,
-        }}
-      >
-        {/*{' '}
-        {this.state.episodeList.length > 0
-          ? <EpisodeList
+
+  renderEpisodeList = ({width, height, episodes}) => {
+    if(episodes.length > 0){
+      return (
+        <EpisodeList
               width={width}
               height={height}
-              episodes={this.state.episodeList}
+              episodes={this.props.episodes}
               handleClick={this.handleClick}
-            />
-          : <Text> No item </Text>}
-        {' '}*/}
+        />
+      )
+    }
+    return <Text> No item </Text>
+  }
+
+  render() {
+
+    return (
+      <View style={styles.episodeScreen}>
+      {
+        this.renderEpisodeList(this.props)
+      }
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  episodeScreen: {
+    flex:1
+  }
+});
