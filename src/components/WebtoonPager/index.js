@@ -8,6 +8,7 @@ import { TabViewAnimated, TabBar } from 'react-native-tab-view'
 import { bindActionCreators } from 'redux'
 import {updateSite, setWebtoonId} from 'redux/actions'
 import ToonGird from 'components/ToonGrid'
+import {BasicSpinner} from 'components'
 import { siteList, pagerRoutes, weekdaysEng } from 'models/data'
 import { defaultModel } from 'models/model'
 
@@ -134,11 +135,13 @@ class WebtoonPager extends Component {
   }
   render() {
     const {site, webtoons} = this.props
+    const isWebtoonExist = webtoons.length > 0
     return (
       <View
         style={{
           flex: 1,
         }}
+    
       >
         <MaterialIcon.ToolbarAndroid
           title={site.toUpperCase()}
@@ -151,8 +154,10 @@ class WebtoonPager extends Component {
           subtitleColor="white"
           actions={toolbarActions}
         />
+        
+        {!isWebtoonExist && <BasicSpinner/>}
         {
-          webtoons.length > 0 &&
+         isWebtoonExist &&
           <TabViewAnimated
             style={styles.container}
             navigationState={this.state}
