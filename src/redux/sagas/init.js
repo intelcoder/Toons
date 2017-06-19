@@ -72,7 +72,7 @@ function* startInit(action) {
   try {
     const login = yield select(getLogin)
     yield put({ type: INIT_FETCH_START })
-    const requestUrl = createRequestUrl(urlTypes.List)
+    const requestUrl = createRequestUrl(urlTypes.LIST)
     const result = yield call(getToonRequest, requestUrl, login.tokenDetail)
     yield put({ type: INIT_IMAGE_SAVE_START })
     const webtoonsWithImagePath = yield call(saveImage, result)
