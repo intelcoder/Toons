@@ -2,20 +2,25 @@
  * Created by fiddlest on 5/22/2017.
  */
 import React, { Component } from 'react'
-import { View, Text, Button, AsyncStorage,Dimensions } from 'react-native'
-import {connect} from 'react-redux'
+import { View, Text, Button, AsyncStorage, Dimensions, ToastAndroid } from 'react-native'
+import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import {requestReadPermission, requestWritePermission} from 'utils/permissionRequest'
-import {INIT_START, FETCH_WEBTOON_DB} from 'redux/types'
-import {updateSite, initStart} from 'redux/actions'
-import {defaultModel} from 'models/model'
-import {WebtoonPager} from 'components'
+import {
+  requestReadPermission,
+  requestWritePermission,
+} from 'utils/permissionRequest'
+import { INIT_START, FETCH_WEBTOON_DB, INIT_SUCCESS } from 'redux/types'
+import { updateSite, initStart } from 'redux/actions'
+import { defaultModel } from 'models/model'
+import { WebtoonPager, BasicSpinner } from 'components'
 
 import { createSelector } from 'reselect'
 
+
 @connect((state) => ({
   login: state.login,
-  init: state.init,
+  isInitializing: state.init.isInitializing,
+  initStatus: state.init.status,
   site: state.webtoon.site
 }),
 (dispatch) => {
@@ -25,45 +30,58 @@ import { createSelector } from 'reselect'
   }, dispatch)
 })
 class WebtoonScreen extends Component {
-
   state = {
     width: 0,
     height: 0,
   }
-
-   componentWillMount() {
-    const {width, height} = Dimensions.get('window');
+  componentWillMount() {
+    const { width, height } = Dimensions.get('window')
     this.setState({
       width: width,
-      height: height
-    });
+      height: height,
+    })
   }
   componentDidMount() {
     requestReadPermission()
     requestWritePermission()
 
-    this.initOrFetchStart();
+    this.initOrFetchStart()
   }
 
   initOrFetchStart = async () => {
-    const {site} = this.props
-
+    const { site } = this.props
     //Later on naver will be fetched from user config
     const naverToonIds = await defaultModel.getByKey(site)
-    if(naverToonIds){
-       this.props.updateSite(site)
-    }else {
+    if (naverToonIds) {
+      this.props.updateSite(site)
+    } else {
       this.props.startInit()
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.initStatus === INIT_SUCCESS) {
+      this.props.updateSite(nextProps.site)
+    }
+    if (
+      nextProps.isInitializing &&
+      this.props.initStatus !== nextProps.initStatus
+    ) {
+      ToastAndroid.show(nextProps.initStatus, ToastAndroid.SHORT);
     }
   }
 
   render() {
+    const { isInitializing } = this.props
     return (
-      <View style={{flex: 1}}>
-        <WebtoonPager 
-          width={this.state.width}
-          navigation={this.props.navigation}
-        />
+      <View style={{ flex: 1 }}>
+        {isInitializing && <BasicSpinner />}
+
+        {!isInitializing &&
+          <WebtoonPager
+            width={this.state.width}
+            navigation={this.props.navigation}
+          />}
+
       </View>
     )
   }
