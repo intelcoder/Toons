@@ -16,11 +16,16 @@ import {
   GET_EPISODES_DB,
   GET_EPISODES_API,
 } from 'redux/types'
-import { siteUpdated, getEpisodesDbSuccess } from 'redux/actions'
+import {
+  siteUpdated,
+  getEpisodesDbSuccess,
+  getToonImageApiSuccess,
+  getToonImageApiFail,
+} from 'redux/actions'
 import { defaultModel } from 'models/model'
 import { urlTypes } from 'models/data'
 import { getToonRequest } from 'utils/apis'
-import { saveEpisodeImage } from 'utils/saveImage'
+import { saveEpisodeImage, saveToonImageToLocal } from 'utils/saveImage'
 import { extractValueFromObjArray, createRequestUrl } from 'utils'
 
 function* fetchData(action) {
@@ -103,6 +108,60 @@ function* getEpisodesApi(action) {
   yield put(getEpisodesDbSuccess(savedEpisodes))
 }
 
+async function saveToonImagesToDb(toonId, episodeNo, imageList) {
+  const savePromises = imageList.map(imageObj => {
+    return saveToonImageToLocal(imageObj, toondId, episodeNo)
+  })
+
+  try {
+    const toonImageData = await Promise.all(savePromises)
+    const saveIntoLocal = defaultModel.save(
+      `webtoon:${toonId}:ep:${episodeNo}:toon`,
+      toonImageData
+    )
+    const saved = Promise.all(saveIntoLocal)
+    return toonImageData
+  } catch (e) {
+    console.log('error occured saving toonList', e)
+  }
+}
+async function getImageListFromStorage(toonId, episodeNo) {
+  const imageLists = await defaultModel.getByKey(
+    `webtoon:${toonId}:ep:${episodeNo}:toon`
+  )
+
+  if (imageLists) {
+    return imageLists
+  }
+  return []
+}
+
+function* getToonImagesApi(action) {
+  const { episodeNo } = action
+  const webtoonId = yield select(state => state.webtoon.selectedWebtoon)
+  const tokenDetail = yield select(state => state.login.tokenDetail)
+  const requestUrl = yield call(
+    createRequestUrl,
+    urlTypes.TOON_IMAGE,
+    webtoonId,
+    episodeNo
+  )
+  const result = yield call(getToonRequest, requestUrl, tokenDetail)
+  const toonImageData = yield call(
+    saveToonImagesToDb,
+    webtoonId,
+    episodeNo,
+    result
+  )
+  if (result) {
+    yield put(getToonImageApiSuccess(toonImageData))
+  }
+}
+
+function* getToonImagesDb(action) {
+  const { toonId, episodeNo } = action
+}
+
 function* fetchWebtoon() {
   yield takeLatest(SITE_UPDATE, fetchWebtoons)
 }
@@ -120,7 +179,7 @@ function* webtoonSelected() {
 }
 
 function* episodeSelected() {
-  yield takeLatest(EPISODE_SELECTED, fetchData)
+  yield takeLatest(EPISODE_SELECTED, getToonImagesApi)
 }
 
 function* webtoonsUpdated() {
@@ -131,8 +190,8 @@ function* episodesUpdated() {
   yield takeLatest(EPISODE_UPDATED, fetchData)
 }
 
-function* toonImageUpdated() {
-  yield takeLatest(TOON_IMAGES_UPDATED, fetchData)
+function* fetchToonImagesDb() {
+  yield takeLatest(GET_TOON_IMAGES_DB, getToonImagesDb)
 }
 export default all([
   fetchWebtoon(),
@@ -142,5 +201,5 @@ export default all([
   episodeSelected(),
   webtoonsUpdated(),
   episodesUpdated(),
-  toonImageUpdated(),
+  fetchToonImagesDb(),
 ])
