@@ -3,7 +3,7 @@ export const weekdaysEng = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 export const urlTypes = {
   LIST: 'list',
   EPISODE: 'episode',
-  TOONIMAGE: 'toonImage',
+  TOON_IMAGE: 'toonImage',
 } //@todo Add rezin and kakao later
 export const siteList = ['naver', 'daum']
 export const netState = {
