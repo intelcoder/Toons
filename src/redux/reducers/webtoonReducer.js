@@ -8,6 +8,7 @@ import {
   EPISODE_UPDATED,
   TOON_IMAGES_UPDATED,
   GET_EPISODES_DB_SUCCESS,
+  GET_TOON_IMAGES_API,
 } from 'redux/types'
 
 const webtoonObj = siteList.reduce((acc, site) => {
@@ -22,6 +23,7 @@ const initState = {
   webtoons: webtoonObj,
   episodes: [],
   toonImages: [],
+  isFetching: [],
 }
 
 const webtoonReducer = createReducer(initState, {
@@ -48,6 +50,27 @@ const webtoonReducer = createReducer(initState, {
     return {
       ...state,
       selectedWebtoon: toonId,
+    }
+  },
+  [EPISODE_SELECTED](state, action) {
+    const { episodeNo } = action
+    return {
+      ...state,
+      selectedEpisodes: episodeNo,
+    }
+  },
+  [GET_TOON_IMAGES_API](state, action) {
+    const { episodeNo } = action
+    return {
+      ...state,
+      toonImages: [],
+    }
+  },
+  [GET_EPISODES_DB_SUCCESS](state, action) {
+    const { toonImageList } = action
+    return {
+      ...state,
+      toonImages: toonImageList,
     }
   },
 })
