@@ -13,7 +13,7 @@ import secret from 'config/secret'
 import { defaultModel } from 'models/model'
 import { isTokenValid, extractValueFromObjArray } from 'utils'
 import { saveEpisodeImage } from 'utils/saveImage'
-import { getEpisodesDb, getEpisodesApi } from 'redux/actions'
+import { getEpisodesDb, getEpisodesApi, episodeSelected } from 'redux/actions'
 
 /*
  * if last uploaded time is diff save
@@ -26,7 +26,8 @@ import { getEpisodesDb, getEpisodesApi } from 'redux/actions'
 }), (dispatch) => {
   return bindActionCreators({
       getEpisodesDb: getEpisodesDb,
-      getEpisodesApi: getEpisodesApi
+      getEpisodesApi: getEpisodesApi,
+      episodeSelected: episodeSelected
   }, dispatch)
 })
 export default class EpisodePage extends Component {
@@ -40,29 +41,34 @@ export default class EpisodePage extends Component {
     const { site, toonId, isConnected, isTokenValid } = this.props
     const epBaseKey = [site, toonId, 'ep'].join(':')
     let episodeKeys = await defaultModel.getByKey(epBaseKey)
- 
+
+
     if (episodeKeys) {
       //assemble keys
       episodeKeys = episodeKeys.map(key => {
         return [epBaseKey, key].join(':')
       })
-      return this.props.getEpisodesDb( episodeKeys)
+      return this.props.getEpisodesDb(episodeKeys)
     }
     //if (isTokenValid && isConnected) {
     if (isTokenValid) {
       this.props.getEpisodesApi(toonId, epBaseKey)
+    }else {
+      this.props.navigation.navigate('Login')
     }
   }
 
   handleClick = episode => {
     return () => {
       const { toonId } = this.props
+      if(this.props.isTokenValid){
+        this.props.episodeSelected(episode.no)
+         this.props.navigation.navigate('ToonView')
+      }else {
+          this.props.navigation.navigate('Login')
+      }
+     
     }
-  }
-  getContents = episodes => {
-    this.setState({
-      episodeList: episodes,
-    })
   }
 
   renderEpisodeList = ({width, height, episodes}) => {
