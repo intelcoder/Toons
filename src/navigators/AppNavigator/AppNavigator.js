@@ -13,6 +13,7 @@ import HomeScreen from 'Toons/src/screens/HomeScreen/HomeScreen'
 import WebtoonScreen from 'Toons/src/screens/WebtoonScreen/WebtoonScreen'
 import LoginScreen from 'Toons/src/screens/LoginScreen/LoginScreen'
 import EpisodeScreen from 'Toons/src/screens/EpisodeScreen/EpisodeScreen'
+import ToonViewScreen from 'Toons/src/screens/ToonViewScreen/ToonViewScreen'
 
 export const AppNavigator = StackNavigator(
   {
@@ -21,6 +22,7 @@ export const AppNavigator = StackNavigator(
     },
     Webtoon: {
       screen: WebtoonScreen,
+      navigationOptions: { header: null },
     },
     Login: {
       screen: LoginScreen,
@@ -28,11 +30,15 @@ export const AppNavigator = StackNavigator(
     Episode: {
       screen: EpisodeScreen,
     },
+    ToonView: {
+      screen: ToonViewScreen,
+    },
   },
   {
     mode: 'modal',
     cardStyle: { backgroundColor: 'white' },
     tintColor: '#ffffff',
+    headerMode: 'screen',
   }
 )
 
