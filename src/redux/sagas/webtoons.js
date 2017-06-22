@@ -15,6 +15,8 @@ import {
   TOON_IMAGES_UPDATED,
   GET_EPISODES_DB,
   GET_EPISODES_API,
+  GET_TOON_IMAGES_DB,
+  GET_TOON_IMAGES_API,
 } from 'redux/types'
 import {
   siteUpdated,
@@ -110,7 +112,7 @@ function* getEpisodesApi(action) {
 
 async function saveToonImagesToDb(toonId, episodeNo, imageList) {
   const savePromises = imageList.map(imageObj => {
-    return saveToonImageToLocal(imageObj, toondId, episodeNo)
+    return saveToonImageToLocal(imageObj, toonId, episodeNo)
   })
 
   try {
@@ -147,6 +149,7 @@ function* getToonImagesApi(action) {
     episodeNo
   )
   const result = yield call(getToonRequest, requestUrl, tokenDetail)
+
   const toonImageData = yield call(
     saveToonImagesToDb,
     webtoonId,
@@ -160,6 +163,13 @@ function* getToonImagesApi(action) {
 
 function* getToonImagesDb(action) {
   const { toonId, episodeNo } = action
+  const key = `webtoon:${toonId}:ep:${episodeNo}:toon`
+  const toonImages = yield call(defaultModel.getByKey, key)
+  if (toonImages) {
+    yield put(getToonImageApiSuccess(toonImages))
+  } else {
+    yield put({ type: GET_TOON_IMAGES_API, episodeNo: episodeNo })
+  }
 }
 
 function* fetchWebtoon() {
@@ -178,10 +188,6 @@ function* webtoonSelected() {
   yield takeLatest(WEBTOON_SELECTED, fetchData)
 }
 
-function* episodeSelected() {
-  yield takeLatest(EPISODE_SELECTED, getToonImagesApi)
-}
-
 function* webtoonsUpdated() {
   yield takeLatest(WEBTOON_UPDATED, fetchData)
 }
@@ -193,6 +199,11 @@ function* episodesUpdated() {
 function* fetchToonImagesDb() {
   yield takeLatest(GET_TOON_IMAGES_DB, getToonImagesDb)
 }
+
+function* episodeSelected() {
+  yield takeLatest(GET_TOON_IMAGES_API, getToonImagesApi)
+}
+
 export default all([
   fetchWebtoon(),
   fetchEpisodesApi(),
