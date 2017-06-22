@@ -12,7 +12,8 @@ import Login from 'components/Login/Login'
 
 
 @connect((state) => ({
-  login: state.login
+  login: state.login,
+  routes:state.nav.routes
 }),
 (dispatch) => {
   return bindActionCreators({
@@ -33,8 +34,13 @@ class LoginScreen extends Component {
   componentWillUpdate(nextProps){
     if(this.props.login !== nextProps.login){
       if(!this.navigated && nextProps.login.hasToken){
+        if(this.props.routes.length > 0){
+          this.props.navigation.goBack()
+        }else {
           this.props.navigation.navigate('Webtoon')
           this.navigated = true
+        }
+        
       }
     }
   }
@@ -43,6 +49,7 @@ class LoginScreen extends Component {
 
     const {status} = this.props.login
 
+    console.log(this.props)
     return (
       <View style={{flex: 1}}>
         <Login onPress={this.handleOnPress}/>
