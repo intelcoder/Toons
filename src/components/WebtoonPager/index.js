@@ -91,10 +91,6 @@ class WebtoonPager extends Component {
       )
     }
   }
-  componentWillReceiveProps(nextProps){
-    console.log('will', nextProps)
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
     const {site, webtoons} = this.props
     const { favoriteSelectActive } = this.state
