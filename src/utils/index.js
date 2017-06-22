@@ -59,7 +59,7 @@ export const createRequestUrl = (type, id = null, episode = null) => {
     return baseUrl
   } else if (type == urlTypes.EPISODE) {
     return baseUrl + `${id}/episode`
-  } else if (type == urlTypes.TOONIMAGE) {
+  } else if (type == urlTypes.TOON_IMAGE) {
     return baseUrl + `${id}/episode/${episode}/toon`
   }
 }
