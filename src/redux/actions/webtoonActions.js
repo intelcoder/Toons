@@ -44,4 +44,8 @@ export const getToonImageApiSuccess = makeActionCreator(
 )
 export const getToonImageApiFail = makeActionCreator(GET_TOON_IMAGES_API_FAIL)
 
-export const getToonImageDb = makeActionCreator(GET_TOON_IMAGES_DB)
+export const getToonImageDb = makeActionCreator(
+  GET_TOON_IMAGES_DB,
+  'toonId',
+  'episodeNo'
+)
