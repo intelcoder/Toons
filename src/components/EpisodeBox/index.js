@@ -14,7 +14,6 @@ import {
 import moment from 'moment'
 
 const EpisodeBox = ({ width, height, episode, handleClick }) => {
-  console.log(episode.thumbnail_url)
   return (
     <TouchableNativeFeedback
       style={[styles.episodeBox, { height: 100, width: width }]}
@@ -28,9 +27,6 @@ const EpisodeBox = ({ width, height, episode, handleClick }) => {
               uri: 'file://' + episode.thumbnail_url,
               width: 120,
               height: 99,
-            }}
-            onError={e => {
-              console.log(e.error)
             }}
           />
         </View>
