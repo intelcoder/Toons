@@ -80,8 +80,11 @@ export const createUrlQuery = params => {
 }
 
 export const extractValueFromObjArray = (array, fieldName) => {
-  return array.reduce((acc, item) => {
-    if (item[fieldName]) acc.push(item[fieldName])
-    return acc
-  }, [])
+  if (array) {
+    return array.reduce((acc, item) => {
+      if (item[fieldName]) acc.push(item[fieldName])
+      return acc
+    }, [])
+  }
+  return []
 }
