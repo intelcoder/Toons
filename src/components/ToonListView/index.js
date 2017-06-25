@@ -32,8 +32,7 @@ export default class WebtoonView extends Component {
           source={{
             uri: 'file://' + toonImage.image_url,
             width: width,
-            height: 1000,
-            scale: 1.5,
+            height: height,
           }}
         />
       )
