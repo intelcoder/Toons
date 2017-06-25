@@ -10,23 +10,24 @@ import {
   requestWritePermission,
 } from 'utils/permissionRequest'
 import { INIT_START, FETCH_WEBTOON_DB, INIT_SUCCESS } from 'redux/types'
-import { updateSite, initStart } from 'redux/actions'
+import { updateSite, initStart, getCachedToken } from 'redux/actions'
 import { defaultModel } from 'models/model'
 import { WebtoonPager, BasicSpinner } from 'components'
-
+import { isTokenValid } from 'utils'
 import { createSelector } from 'reselect'
-
 
 @connect((state) => ({
   login: state.login,
   isInitializing: state.init.isInitializing,
   initStatus: state.init.status,
-  site: state.webtoon.site
+  site: state.webtoon.site,
+  isFetching: state.webtoon.isFetching
 }),
 (dispatch) => {
   return bindActionCreators({
       startInit: initStart,
-      updateSite: updateSite
+      updateSite: updateSite,
+      getCachedToken: getCachedToken
   }, dispatch)
 })
 class WebtoonScreen extends Component {
@@ -40,11 +41,19 @@ class WebtoonScreen extends Component {
       width: width,
       height: height,
     })
+    this.getCachedToken()
   }
+
+  getCachedToken = async () => {
+    const token = await  defaultModel.getByKey('TOKEN')
+    if(token && isTokenValid(token)){
+      this.props.getCachedToken(token)
+    }
+  }
+
   componentDidMount() {
     requestReadPermission()
     requestWritePermission()
-
     this.initOrFetchStart()
   }
 
@@ -71,16 +80,23 @@ class WebtoonScreen extends Component {
   }
 
   render() {
-    const { isInitializing } = this.props
+    const { isInitializing, isFetching } = this.props
+
+    const shouldShowContents = (!isInitializing || !isFetching)
+    
     return (
       <View style={{ flex: 1 }}>
-        {isInitializing && <BasicSpinner />}
-
-        {!isInitializing &&
+        {
+          !shouldShowContents && <BasicSpinner />
+          
+        }
+        {
+          shouldShowContents &&
           <WebtoonPager
             width={this.state.width}
             navigation={this.props.navigation}
-          />}
+          />  
+        }
 
       </View>
     )

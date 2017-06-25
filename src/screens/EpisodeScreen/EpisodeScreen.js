@@ -14,7 +14,7 @@ import { defaultModel } from 'models/model'
 import { isTokenValid, extractValueFromObjArray } from 'utils'
 import { saveEpisodeImage } from 'utils/saveImage'
 import { getEpisodesDb, getEpisodesApi, episodeSelected } from 'redux/actions'
-
+import {BasicSpinner} from 'components'
 /*
  * if last uploaded time is diff save
  * */
@@ -22,7 +22,8 @@ import { getEpisodesDb, getEpisodesApi, episodeSelected } from 'redux/actions'
   isTokenValid: isTokenValid(state.login),
   episodes: state.webtoon.episodes,
   toonId: state.webtoon.selectedWebtoon,
-  site: state.webtoon.site
+  site: state.webtoon.site,
+  isConnected: state.app.isConnected
 }), (dispatch) => {
   return bindActionCreators({
       getEpisodesDb: getEpisodesDb,
@@ -34,6 +35,7 @@ export default class EpisodePage extends Component {
 
   //site:pk:ep - list of episode
   componentDidMount() {
+    console.log(this.props)
     this.onLoad()
   }
 
@@ -58,16 +60,17 @@ export default class EpisodePage extends Component {
     }
   }
 
-  handleClick = episode => {
-    return () => {
-      const { toonId } = this.props
-      if(this.props.isTokenValid){
-        this.props.episodeSelected(episode.no)
-         this.props.navigation.navigate('ToonView')
+  handleClick =  (episode) => {
+    return async () => {
+      const { toonId, isTokenValid, isConnected } = this.props
+      const toonImages = await defaultModel.getByKey(`webtoon:${toonId}:ep:${episode.no}:toon`)
+   
+      if(toonImages || isTokenValid) {
+         this.props.episodeSelected(episode.no)
+         return this.props.navigation.navigate('ToonView',{toonImageKeys: toonImages})
       }else {
-          this.props.navigation.navigate('Login')
+         return this.props.navigation.navigate('Login' )
       }
-     
     }
   }
 
@@ -82,7 +85,7 @@ export default class EpisodePage extends Component {
         />
       )
     }
-    return <Text> No item </Text>
+    return <BasicSpinner/>
   }
 
   render() {
