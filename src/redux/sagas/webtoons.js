@@ -28,7 +28,7 @@ import { defaultModel } from 'models/model'
 import { urlTypes } from 'models/data'
 import { getToonRequest } from 'utils/apis'
 import { saveEpisodeImage, saveToonImageToLocal } from 'utils/saveImage'
-import { extractValueFromObjArray, createRequestUrl } from 'utils'
+import { extractValueFromObjArray, createRequestUrl, isTokenValid } from 'utils'
 
 function* fetchData(action) {
   if (action.site) {
@@ -101,6 +101,7 @@ function* getEpisodesApi(action) {
   const tokenDetail = yield select(state => state.login.tokenDetail)
   const requestUrl = yield call(createRequestUrl, urlTypes.EPISODE, toonId)
   const result = yield call(getToonRequest, requestUrl, tokenDetail)
+  console.log(result)
   const savedEpisodes = yield call(
     saveEpisodeToDb,
     episodeKey,
@@ -162,12 +163,12 @@ function* getToonImagesApi(action) {
 }
 
 function* getToonImagesDb(action) {
-  const { toonId, episodeNo } = action
-  const key = `webtoon:${toonId}:ep:${episodeNo}:toon`
-  const toonImages = yield call(defaultModel.getByKey, key)
+  const { episodeNo, toonImages } = action
+  const isConnected = yield select(state => state.app.isConnected)
+  const login = yield select(state => state.login)
   if (toonImages) {
     yield put(getToonImageApiSuccess(toonImages))
-  } else {
+  } else if( isConnected && isTokenValid(login)) {
     yield put({ type: GET_TOON_IMAGES_API, episodeNo: episodeNo })
   }
 }
