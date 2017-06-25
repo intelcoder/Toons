@@ -12,3 +12,6 @@ const appReducer = createReducer(initState, {
     }
   },
 })
+
+
+export default appReducer
