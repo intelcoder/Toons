@@ -13,7 +13,7 @@ import { getToonImagesApi, getToonImageDb } from 'redux/actions'
 import { View, Text, AsyncStorage } from 'react-native'
 import { defaultModel } from 'models/model'
 import { bindActionCreators } from 'redux'
-
+import { WebtoonPager, BasicSpinner } from 'components'
 @connect(state=>({
   toonImages: state.webtoon.toonImages,
   toonId: state.webtoon.selectedWebtoon,
@@ -27,15 +27,27 @@ import { bindActionCreators } from 'redux'
 class ToonViewScreen extends Component {
 
   componentDidMount(){
-    const {toonId, episodeNo} = this.props
-    this.props.getToonImageDb(toonId, episodeNo)
+    this.tryToGetToonImages()
+  }
+
+
+  tryToGetToonImages = async () => {
+      const {toonId, episodeNo} = this.props
+      const {toonImageKeys} = this.props.navigation.state.params
+   
+      if(toonImageKeys){
+        this.props.getToonImageDb(episodeNo, toonImageKeys)
+      }
   }
   render() {
-    console.log(this.props)
     return (
       <View style={{ flex: 1 }}>
         {
-          this.props.toonImages.length > 0 &&   <ToonListView toonImageList={this.props.toonImages} />
+          !this.props.toonImages.length && <BasicSpinner />
+        }
+      
+        {
+          this.props.toonImages.length > 0 && <ToonListView toonImageList={this.props.toonImages} />
         }
       
       </View>
