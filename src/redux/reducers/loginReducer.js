@@ -32,6 +32,8 @@ export default (state = initState, action) => {
       isFetching: false,
       error: action.error,
     })
+  } else if (action.type === 'GET_CACHED_TOKEN') {
+    return action.token
   }
 
   return state
