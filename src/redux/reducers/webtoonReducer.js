@@ -1,6 +1,7 @@
 import { createReducer } from 'utils/reduxGenerator'
 import { siteList } from 'models/data'
 import {
+  SITE_UPDATE,
   SITE_UPDATE_SUCCESS,
   WEBTOON_SELECTED,
   EPISODE_SELECTED,
@@ -24,14 +25,21 @@ const initState = {
   webtoons: webtoonObj,
   episodes: [],
   toonImages: [],
-  isFetching: [],
+  isFetching: false,
 }
 
 const webtoonReducer = createReducer(initState, {
+  [SITE_UPDATE](state, action){
+    return {
+      ...state,
+      isFetching: true
+    }
+  },
   [SITE_UPDATE_SUCCESS](state, action) {
     const { site, webtoons } = action
     return {
       ...state,
+      isFetching: false,
       site: site,
       webtoons: {
         ...state.webtoons,
