@@ -33,7 +33,7 @@ export const getEpisodesApi = makeActionCreator(
   'episodeKey'
 )
 
-export const episodeSelected = makeActionCreator(EPISODE_SELECTED, 'episodeNo')
+export const episodeSelected = makeActionCreator(EPISODE_SELECTED, 'episodeNo', 'toonImages')
 
 export const setWebtoonId = makeActionCreator(WEBTOON_SELECTED, 'toonId')
 
@@ -46,6 +46,6 @@ export const getToonImageApiFail = makeActionCreator(GET_TOON_IMAGES_API_FAIL)
 
 export const getToonImageDb = makeActionCreator(
   GET_TOON_IMAGES_DB,
-  'toonId',
-  'episodeNo'
+  'episodeNo',
+  'toonImages'
 )
