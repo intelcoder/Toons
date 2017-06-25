@@ -1,6 +1,7 @@
 /**
  * Created by fiddlest on 2/27/2017.
  */
+import { makeActionCreator } from 'utils/reduxGenerator'
 import secret from '../../config/secret'
 import { LOGIN_REQUESTED, LOGIN_SUCCESS, LOGIN_FAIL } from 'redux/types'
 
@@ -69,3 +70,5 @@ const fetchToken = requestDetail => {
       })
   }
 }
+
+export const getCachedToken = makeActionCreator('GET_CACHED_TOKEN', 'token')
