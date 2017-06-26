@@ -44,7 +44,7 @@ export default class EpisodePage extends Component {
     const epBaseKey = [site, toonId, 'ep'].join(':')
     let episodeKeys = await defaultModel.getByKey(epBaseKey)
 
-
+    console.log(episodeKeys)
     if (episodeKeys) {
       //assemble keys
       episodeKeys = episodeKeys.map(key => {
@@ -54,7 +54,7 @@ export default class EpisodePage extends Component {
     }
     //if (isTokenValid && isConnected) {
     if (isTokenValid) {
-      this.props.getEpisodesApi(toonId, epBaseKey)
+      this.props.getEpisodesApi(site, toonId, epBaseKey)
     }else {
       this.props.navigation.navigate('Login')
     }

@@ -29,15 +29,24 @@ export const getEpisodesDbSuccess = makeActionCreator(
 
 export const getEpisodesApi = makeActionCreator(
   GET_EPISODES_API,
+  'site',
   'toonId',
   'episodeKey'
 )
 
-export const episodeSelected = makeActionCreator(EPISODE_SELECTED, 'episodeNo', 'toonImages')
+export const episodeSelected = makeActionCreator(
+  EPISODE_SELECTED,
+  'episodeNo',
+  'toonImages'
+)
 
 export const setWebtoonId = makeActionCreator(WEBTOON_SELECTED, 'toonId')
 
-export const getToonImagesApi = makeActionCreator(GET_TOON_IMAGES_API)
+export const getToonImagesApi = makeActionCreator(
+  GET_TOON_IMAGES_API,
+  'toonId',
+  'episodeNo'
+)
 export const getToonImageApiSuccess = makeActionCreator(
   GET_TOON_IMAGES_API_SUCCESS,
   'toonImageList'
@@ -49,3 +58,9 @@ export const getToonImageDb = makeActionCreator(
   'episodeNo',
   'toonImages'
 )
+
+export const UPDATE_ALL_FAV_EPISODE_TOON = 'UPDATE_ALL_FAV_EPISODE_TOON'
+export const UPDATE_ALL_FAV_EPISODE_TOON_SUCCESS = 'UPDATE_ALL_FAV_EPISODE_TOON'
+export const UPDATE_ALL_FAV_EPISODE_TOON_FAIL = 'UPDATE_ALL_FAV_EPISODE_TOON'
+
+export const updateAllFav = makeActionCreator(UPDATE_ALL_FAV_EPISODE_TOON)

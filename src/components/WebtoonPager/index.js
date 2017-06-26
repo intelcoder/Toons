@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import { View, StyleSheet, ToolbarAndroid, AsyncStorage } from 'react-native'
 import { TabViewAnimated, TabBar } from 'react-native-tab-view'
 import { bindActionCreators } from 'redux'
-import {updateSite, setWebtoonId} from 'redux/actions'
+import {updateSite, setWebtoonId, updateAllFav} from 'redux/actions'
 import ToonGird from 'components/ToonGrid'
 import {BasicSpinner} from 'components'
 import { siteList, pagerRoutes, weekdaysEng } from 'models/data'
@@ -23,7 +23,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 (dispatch) => {
   return bindActionCreators({
       updateSite: updateSite,
-      setWebtoonId: setWebtoonId
+      setWebtoonId: setWebtoonId,
+      updateAllFav: updateAllFav
   }, dispatch)
 })
 class WebtoonPager extends Component {
@@ -61,6 +62,10 @@ class WebtoonPager extends Component {
         favoriteSelected: [this.state.favoriteSelecte, ...favorites],
         favoriteSelectActive: !this.state.favoriteSelectActive,
       })
+    }
+    if(actionTitle === 'favsync'){
+      //first get list of favorite webtoon
+      this.props.updateAllFav()
     }
   }
  
@@ -187,10 +192,16 @@ const toolbarActions = [
   { title: 'Naver' },
   { title: 'Daum' },
   {
+    title: 'FavSync',
+    show: 'always',
+    iconName: 'get-app'
+  },
+  {
     title: 'Like',
     show: 'always',
     iconName: 'favorite',
-  },
+  }
+  
 ]
 
 const toolbarData = {

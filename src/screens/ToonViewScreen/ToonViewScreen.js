@@ -4,17 +4,19 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { assembleUrl } from 'utils/index'
+import { bindActionCreators } from 'redux'
 import { urlTypes } from 'models/data'
 import Model from 'models/model'
 import ToonListView from 'components/ToonListView'
 import { saveToonImageToLocal } from 'utils/saveImage'
-import { getToonImagesApi, getToonImageDb } from 'redux/actions'
+import { getToonImageDb, getToonImagesApi } from 'redux/actions'
 import { View, Text, AsyncStorage } from 'react-native'
 import { defaultModel } from 'models/model'
-import { bindActionCreators } from 'redux'
+
+import { isTokenValid, extractValueFromObjArray, assembleUrl } from 'utils'
 import { WebtoonPager, BasicSpinner } from 'components'
 @connect(state=>({
+  isTokenValid: isTokenValid(state.login),
   toonImages: state.webtoon.toonImages,
   toonId: state.webtoon.selectedWebtoon,
   episodeNo: state.webtoon.selectedEpisodes
@@ -22,6 +24,7 @@ import { WebtoonPager, BasicSpinner } from 'components'
 (dispatch) => {
   return bindActionCreators({
       getToonImageDb: getToonImageDb,
+      getToonImagesApi: getToonImagesApi
   }, dispatch)
 })
 class ToonViewScreen extends Component {
@@ -32,11 +35,15 @@ class ToonViewScreen extends Component {
 
 
   tryToGetToonImages = async () => {
-      const {toonId, episodeNo} = this.props
+      const {toonId, episodeNo, isTokenValid} = this.props
       const {toonImageKeys} = this.props.navigation.state.params
    
       if(toonImageKeys){
         this.props.getToonImageDb(episodeNo, toonImageKeys)
+      }else if(!isTokenValid) {
+         return this.props.navigation.navigate('Login' )
+      }else if(isTokenValid) {
+        return this.props.getToonImagesApi(toonId, episodeNo)
       }
   }
   render() {

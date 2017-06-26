@@ -5,6 +5,7 @@ import {
   takeEvery,
   takeLatest,
   select,
+  fork,
 } from 'redux-saga/effects'
 import {
   SITE_UPDATE,
@@ -18,6 +19,9 @@ import {
   GET_TOON_IMAGES_DB,
   GET_TOON_IMAGES_API,
 } from 'redux/types'
+
+import { UPDATE_ALL_FAV_EPISODE_TOON } from 'redux/actions'
+
 import {
   siteUpdated,
   getEpisodesDbSuccess,
@@ -28,7 +32,12 @@ import { defaultModel } from 'models/model'
 import { urlTypes } from 'models/data'
 import { getToonRequest } from 'utils/apis'
 import { saveEpisodeImage, saveToonImageToLocal } from 'utils/saveImage'
-import { extractValueFromObjArray, createRequestUrl, isTokenValid } from 'utils'
+import {
+  extractValueFromObjArray,
+  createRequestUrl,
+  isTokenValid,
+  getEpisodeBaseKey,
+} from 'utils'
 
 function* fetchData(action) {
   if (action.site) {
@@ -96,19 +105,20 @@ function* getEpisodesDb(action) {
 }
 
 function* getEpisodesApi(action) {
-  const { toonId, episodeKey } = action
-  const site = yield select(state => state.webtoon.site)
+  const { site, toonId, episodeKey } = action
   const tokenDetail = yield select(state => state.login.tokenDetail)
   const requestUrl = yield call(createRequestUrl, urlTypes.EPISODE, toonId)
   const result = yield call(getToonRequest, requestUrl, tokenDetail)
-  console.log(result)
+  console.log('getEpi', result)
   const savedEpisodes = yield call(
     saveEpisodeToDb,
     episodeKey,
     toonId,
     result.episodes
   )
+  console.log(savedEpisodes)
   yield put(getEpisodesDbSuccess(savedEpisodes))
+  return { [toonId]:savedEpisodes }
 }
 
 async function saveToonImagesToDb(toonId, episodeNo, imageList) {
@@ -140,20 +150,19 @@ async function getImageListFromStorage(toonId, episodeNo) {
 }
 
 function* getToonImagesApi(action) {
-  const { episodeNo } = action
-  const webtoonId = yield select(state => state.webtoon.selectedWebtoon)
+  const { toonId, episodeNo } = action
   const tokenDetail = yield select(state => state.login.tokenDetail)
   const requestUrl = yield call(
     createRequestUrl,
     urlTypes.TOON_IMAGE,
-    webtoonId,
+    toonId,
     episodeNo
   )
   const result = yield call(getToonRequest, requestUrl, tokenDetail)
 
   const toonImageData = yield call(
     saveToonImagesToDb,
-    webtoonId,
+    toonId,
     episodeNo,
     result
   )
@@ -168,7 +177,7 @@ function* getToonImagesDb(action) {
   const login = yield select(state => state.login)
   if (toonImages) {
     yield put(getToonImageApiSuccess(toonImages))
-  } else if( isConnected && isTokenValid(login)) {
+  } else if (isConnected && isTokenValid(login)) {
     yield put({ type: GET_TOON_IMAGES_API, episodeNo: episodeNo })
   }
 }
@@ -178,7 +187,7 @@ function* fetchWebtoon() {
 }
 
 function* fetchEpisodesApi() {
-  yield takeLatest(GET_EPISODES_API, getEpisodesApi)
+  yield takeEvery(GET_EPISODES_API, getEpisodesApi)
 }
 
 function* fetchEpisodesDb() {
@@ -205,6 +214,38 @@ function* episodeSelected() {
   yield takeLatest(GET_TOON_IMAGES_API, getToonImagesApi)
 }
 
+function* updateAllFavEpisodeToon() {
+  yield takeLatest(UPDATE_ALL_FAV_EPISODE_TOON, updateAllFav)
+}
+
+function* updateAllFav() {
+  const baseUrl = yield call(createRequestUrl)
+  const tokenDetail = yield select(state => state.login.tokenDetail)
+  const res = yield call(getToonRequest, baseUrl + 'favorite', tokenDetail)
+
+  const savedEpisodes = yield all(
+    res.map(fav =>{
+      const episodeKey = getEpisodeBaseKey(fav.site, fav.toon_id)
+      return call(getEpisodesApi, {
+         site:fav.site, 
+         toonId:fav.toon_id,
+         episodeKey: episodeKey
+        })
+    })
+  )
+  const flattenEpisodeList = Object.assign(...savedEpisodes)
+  const toonImageKeyLists = yield all(Object.keys(flattenEpisodeList).map(id => {
+      return call(getToonImagesApi, {
+        toonId: id,
+        episodeNo: flattenEpisodeList[id][0].no
+      })
+    })
+  )
+  //update all episode
+}
+
+// function* getToonImagesApi(action) {
+//   const { toonId, episodeNo } = action
 export default all([
   fetchWebtoon(),
   fetchEpisodesApi(),
@@ -214,4 +255,5 @@ export default all([
   webtoonsUpdated(),
   episodesUpdated(),
   fetchToonImagesDb(),
+  fork(updateAllFavEpisodeToon),
 ])

@@ -53,7 +53,7 @@ export const indexToweekday = index => {
   }
 }
 
-export const createRequestUrl = (type, id = null, episode = null) => {
+export const createRequestUrl = (type = '', id = null, episode = null) => {
   const baseUrl = secret.baseUrl
   if (type == urlTypes.LIST) {
     return baseUrl
@@ -62,6 +62,7 @@ export const createRequestUrl = (type, id = null, episode = null) => {
   } else if (type == urlTypes.TOON_IMAGE) {
     return baseUrl + `${id}/episode/${episode}/toon`
   }
+  return baseUrl
 }
 
 export const assembleUrl = (type, id = null, episode = null) => {
@@ -87,4 +88,10 @@ export const extractValueFromObjArray = (array, fieldName) => {
     }, [])
   }
   return []
+}
+
+export const getEpisodeBaseKey = (site, toonId) => {
+  if (site && toonId) {
+    return [site, toonId, 'ep'].join(':')
+  }
 }
