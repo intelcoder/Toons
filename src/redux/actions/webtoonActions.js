@@ -12,7 +12,23 @@ import {
   GET_TOON_IMAGES_API_SUCCESS,
   GET_TOON_IMAGES_API_FAIL,
   GET_TOON_IMAGES_DB,
+  GET_EPISODES_API_FAIL,
 } from 'redux/types'
+
+const REQUEST = 'REQUEST'
+const SUCCESS = 'SUCCESS'
+const FAILURE = 'FAILURE'
+
+function createRequestTypes(base) {
+  return [REQUEST, SUCCESS, FAILURE].reduce((acc, type) => {
+    acc[type] = `${base}_${type}`
+    return acc
+  }, {})
+}
+
+function action(type, payload = {}) {
+  return {type, ...payload}
+}
 
 export const updateSite = makeActionCreator(SITE_UPDATE, 'site')
 export const siteUpdated = makeActionCreator(
@@ -27,6 +43,8 @@ export const getEpisodesDbSuccess = makeActionCreator(
   'episodes'
 )
 
+const episodeApi = createRequestTypes(GET_EPISODES_API)
+
 export const getEpisodesApi = makeActionCreator(
   GET_EPISODES_API,
   'site',
@@ -34,6 +52,7 @@ export const getEpisodesApi = makeActionCreator(
   'episodeKey'
 )
 
+export const getEpisodesApiFail = makeActionCreator(GET_EPISODES_API_FAIL)
 export const episodeSelected = makeActionCreator(
   EPISODE_SELECTED,
   'episodeNo',
