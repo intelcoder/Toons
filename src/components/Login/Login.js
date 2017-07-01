@@ -59,7 +59,7 @@ export default class Login extends Component {
               <Label>Username</Label>
               <Input onChangeText={this.handleIdInput} />
             </Item>
-            <Item floatingLabel last>
+            <Item floatingLabel>
               <Label>Password</Label>
               <Input
                 onChangeText={this.handlePwdInput}
@@ -74,8 +74,8 @@ export default class Login extends Component {
               onPress={this.handleOnPress}
               accessibilityLabel="Press to login"
             >
-              <Text>Login </Text>
-              {/*    <Spinner color='green'/>*/}
+              <Text>Login</Text>
+
             </Button>
           </View>
 
