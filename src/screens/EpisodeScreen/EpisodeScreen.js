@@ -23,7 +23,8 @@ import {BasicSpinner} from 'components'
   episodes: state.webtoon.episodes,
   toonId: state.webtoon.selectedWebtoon,
   site: state.webtoon.site,
-  isConnected: state.app.isConnected
+  isConnected: state.app.isConnected,
+  isFailed: state.webtoon.isFailed
 }), (dispatch) => {
   return bindActionCreators({
       getEpisodesDb: getEpisodesDb,
@@ -74,7 +75,7 @@ export default class EpisodePage extends Component {
     }
   }
 
-  renderEpisodeList = ({width, height, episodes}) => {
+  renderEpisodeList = ({width, height, episodes, isFailed}) => {
     if(episodes.length > 0){
       return (
         <EpisodeList
@@ -85,7 +86,10 @@ export default class EpisodePage extends Component {
         />
       )
     }
-    return <BasicSpinner/>
+    if(!isFailed){
+      return <BasicSpinner/>
+    }
+   
   }
 
   render() {
