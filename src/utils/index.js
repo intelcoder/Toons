@@ -7,6 +7,8 @@ import secret from 'config/secret'
 import queryString from 'query-string'
 import moment from 'moment'
 
+export * from 'utils/styleHelper'
+
 export const isTokenExpired = (tokenExpireAt, expiresIn) => {
   if (tokenExpireAt) {
     return tokenExpireAt + expiresIn > moment().unix()
