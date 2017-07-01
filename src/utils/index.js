@@ -9,7 +9,7 @@ import moment from 'moment'
 
 export const isTokenExpired = (tokenExpireAt, expiresIn) => {
   if (tokenExpireAt) {
-    return tokenExpireAt > moment().unix() + expiresIn
+    return tokenExpireAt + expiresIn > moment().unix()
   }
   return true
 }
