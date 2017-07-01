@@ -34,7 +34,6 @@ class BaseUrlInputModal extends Component {
     this.props.toggleBaseUrlModal()
   }
   render() {
-    console.log(this.props.showMobile)
     return (
       <View style={{ marginBottom: 20, position: 'absolute' }}>
         <Modal
