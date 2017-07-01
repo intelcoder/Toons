@@ -5,10 +5,14 @@
 //@flow
 
 import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+@connect(state => ({
+  likeActivated: state.app.likeActivated
+}))
 export default class ToonCard extends Component {
   state = {
     favoriteSelected: this.props.favorite,
@@ -23,10 +27,10 @@ export default class ToonCard extends Component {
     }
   }
   shouldComponentUpdate(nextProps, nextState) {
-    const { favoriteSelectActive } = this.props
+    const { likeActivated } = this.props
     const { favoriteSelected } = this.state
     if (
-      favoriteSelectActive !== nextProps.favoriteSelected ||
+      likeActivated !== nextProps.likeActivated ||
       favoriteSelected !== nextState.favoriteSelected
     )
       return true
@@ -42,7 +46,7 @@ export default class ToonCard extends Component {
       title,
       width,
       height,
-      favoriteSelectActive,
+      likeActivated,
     } = this.props
     return (
       <TouchableOpacity
@@ -53,7 +57,7 @@ export default class ToonCard extends Component {
           <View
             style={[
               styles.imageFilter,
-              { opacity: favoriteSelectActive ? 1 : 0 },
+              { opacity: likeActivated ? 1 : 0 },
             ]}
           >
             <Icon
@@ -71,11 +75,14 @@ export default class ToonCard extends Component {
 
         <View style={styles.textContainer}>
           <Text
-          style={{flex:1}}
-           numberOfLines={1}
-           style={styles.title}
-        
-           >{title}</Text>
+            style={{
+              flex: 1,
+            }}
+            numberOfLines={1}
+            style={styles.title}
+          >
+            {title}
+          </Text>
           <Text style={styles.rating}>{rating}</Text>
           <Text style={styles.author}>{author}</Text>
         </View>
@@ -101,7 +108,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     backgroundColor: '#f7f8f9',
-    paddingBottom: 5,   
+    paddingBottom: 5,
   },
   title: {
     marginTop: 3,

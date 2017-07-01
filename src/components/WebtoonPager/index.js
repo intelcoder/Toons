@@ -3,20 +3,22 @@
  */
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
-import { View, StyleSheet, ToolbarAndroid, AsyncStorage } from 'react-native'
+import { View, StyleSheet, ToolbarAndroid, AsyncStorage, ToastAndroid } from 'react-native'
 import { TabViewAnimated, TabBar } from 'react-native-tab-view'
 import { bindActionCreators } from 'redux'
-import {updateSite, setWebtoonId, updateAllFav} from 'redux/actions'
+import {updateSite, setWebtoonId, updateAllFav, activateLike} from 'redux/actions'
 import ToonGird from 'components/ToonGrid'
 import {BasicSpinner} from 'components'
 import { siteList, pagerRoutes, weekdaysEng } from 'models/data'
 import { defaultModel } from 'models/model'
-
+import { isTokenValid } from 'utils'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
 
 
 @connect((state) => ({
+  likeActivated: state.app.likeActivated,
+  isTokenValid: isTokenValid(state.login),
   webtoons: state.webtoon.webtoons[state.webtoon.site],
   site: state.webtoon.site
 }),
@@ -24,7 +26,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
   return bindActionCreators({
       updateSite: updateSite,
       setWebtoonId: setWebtoonId,
-      updateAllFav: updateAllFav
+      updateAllFav: updateAllFav,
+      activateLike: activateLike
   }, dispatch)
 })
 class WebtoonPager extends Component {
@@ -32,13 +35,11 @@ class WebtoonPager extends Component {
     index: 0,
     routes: pagerRoutes,
     toolbarActions: [],
-    favoriteSelectActive: false,
     favoriteSelected: [],
   }
 
   constructor(props){
     super(props)
-  
   }
   _onActionSelected = position => {
     const {site} = this.props
@@ -55,17 +56,19 @@ class WebtoonPager extends Component {
       const favorites = webtoons
         .filter(w => w.site == site && w.favorite)
         .map(w => w.toon_id)
-      if (this.state.favoriteSelectActive) {
-        //need to update favorite state on local and server
-      }
       this.setState({
         favoriteSelected: [this.state.favoriteSelecte, ...favorites],
-        favoriteSelectActive: !this.state.favoriteSelectActive,
       })
+      this.props.activateLike()
     }
     if(actionTitle === 'favsync'){
       //first get list of favorite webtoon
+      
+      ToastAndroid.show('Updating all the favorite Webtoons', ToastAndroid.LONG);
       this.props.updateAllFav()
+    }
+    if(actionTitle === 'login') {
+        this.props.navigation.navigate('Login')
     }
   }
  
@@ -110,12 +113,12 @@ class WebtoonPager extends Component {
   }
 
   handleCardClick = (toonId) => {
-    const { favoriteSelectActive } = this.state
-    if (!favoriteSelectActive && toonId) {
+    const { likeActivated } = this.props
+    if (!likeActivated && toonId) {
      this.props.setWebtoonId(toonId)
      this.props.navigation.navigate('Episode')
     
-    } else if (favoriteSelectActive && toonId) {
+    } else if (likeActivated && toonId) {
       const index = this.state.favoriteSelected.indexOf(toonId)
       let selectedIds = []
       if (index < 0) selectedIds = this.state.favoriteSelected.concat(toonId)
@@ -200,8 +203,17 @@ const toolbarActions = [
     title: 'Like',
     show: 'always',
     iconName: 'favorite',
+  },
+  {
+    title: 'Login',
+    show: 'always',
+    iconName: 'account-circle'
+  },
+    {
+    title: 'Edit Url',
+    show: 'always',
+    iconName: 'mode-edit'
   }
-  
 ]
 
 const toolbarData = {
@@ -222,3 +234,4 @@ const toolbarData = {
     backgroundColor: '#F0CC18'
   }
 }
+
