@@ -12,7 +12,7 @@ import {
 import { INIT_START, FETCH_WEBTOON_DB, INIT_SUCCESS } from 'redux/types'
 import { updateSite, initStart, getCachedToken } from 'redux/actions'
 import { defaultModel } from 'models/model'
-import { WebtoonPager, BasicSpinner } from 'components'
+import { WebtoonPager, BasicSpinner, BaseUrlInputModal } from 'components'
 import { isTokenValid } from 'utils'
 import { createSelector } from 'reselect'
 
@@ -98,6 +98,9 @@ class WebtoonScreen extends Component {
           />  
         }
 
+        <View style={{position: 'absolute', top:0}}>
+        <BaseUrlInputModal />
+        </View>
       </View>
     )
   }
