@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import { View, StyleSheet, ToolbarAndroid, AsyncStorage, ToastAndroid } from 'react-native'
 import { TabViewAnimated, TabBar } from 'react-native-tab-view'
 import { bindActionCreators } from 'redux'
-import {updateSite, setWebtoonId, updateAllFav, activateLike} from 'redux/actions'
+import {updateSite, setWebtoonId, updateAllFav, activateLike, toggleBaseUrlModal} from 'redux/actions'
 import ToonGird from 'components/ToonGrid'
 import {BasicSpinner} from 'components'
 import { siteList, pagerRoutes, weekdaysEng } from 'models/data'
@@ -27,7 +27,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
       updateSite: updateSite,
       setWebtoonId: setWebtoonId,
       updateAllFav: updateAllFav,
-      activateLike: activateLike
+      activateLike: activateLike,
+      toggleBaseUrlModal: toggleBaseUrlModal
   }, dispatch)
 })
 class WebtoonPager extends Component {
@@ -69,6 +70,9 @@ class WebtoonPager extends Component {
     }
     if(actionTitle === 'login') {
         this.props.navigation.navigate('Login')
+    }
+    if(actionTitle === 'edit url'){
+      this.props.toggleBaseUrlModal()
     }
   }
  
