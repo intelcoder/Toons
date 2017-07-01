@@ -6,7 +6,9 @@ import {
   takeLatest,
   select,
   fork,
+  race,
 } from 'redux-saga/effects'
+import { delay } from 'redux-saga'
 import {
   SITE_UPDATE,
   WEBTOON_SELECTED,
@@ -19,17 +21,18 @@ import {
   GET_TOON_IMAGES_DB,
   GET_TOON_IMAGES_API,
 } from 'redux/types'
-
+import moment from 'moment'
 import { UPDATE_ALL_FAV_EPISODE_TOON } from 'redux/actions'
-
+import { ToastAndroid } from 'react-native'
 import {
   siteUpdated,
   getEpisodesDbSuccess,
   getToonImageApiSuccess,
   getToonImageApiFail,
+  getEpisodesApiFail,
 } from 'redux/actions'
 import { defaultModel } from 'models/model'
-import { urlTypes } from 'models/data'
+import { urlTypes, weekdaysEng } from 'models/data'
 import { getToonRequest } from 'utils/apis'
 import { saveEpisodeImage, saveToonImageToLocal } from 'utils/saveImage'
 import {
@@ -108,17 +111,21 @@ function* getEpisodesApi(action) {
   const { site, toonId, episodeKey } = action
   const tokenDetail = yield select(state => state.login.tokenDetail)
   const requestUrl = yield call(createRequestUrl, urlTypes.EPISODE, toonId)
-  const result = yield call(getToonRequest, requestUrl, tokenDetail)
-  console.log('getEpi', result)
-  const savedEpisodes = yield call(
-    saveEpisodeToDb,
-    episodeKey,
-    toonId,
-    result.episodes
-  )
-  console.log(savedEpisodes)
-  yield put(getEpisodesDbSuccess(savedEpisodes))
-  return { [toonId]:savedEpisodes }
+  const { result, timeout } = yield race({
+    result: call(getToonRequest, requestUrl, tokenDetail),
+    timeout: call(delay, 1000),
+  })
+  if (result) {
+    const savedEpisodes = yield call(
+      saveEpisodeToDb,
+      episodeKey,
+      toonId,
+      result.episodes
+    )
+    yield put(getEpisodesDbSuccess(savedEpisodes))
+    return { [toonId]: savedEpisodes }
+  }
+  yield put(getEpisodesApiFail())
 }
 
 async function saveToonImagesToDb(toonId, episodeNo, imageList) {
@@ -220,29 +227,38 @@ function* updateAllFavEpisodeToon() {
 
 function* updateAllFav() {
   const baseUrl = yield call(createRequestUrl)
+  const weekdayIndex = moment().weekday()
   const tokenDetail = yield select(state => state.login.tokenDetail)
-  const res = yield call(getToonRequest, baseUrl + 'favorite', tokenDetail)
-
-  const savedEpisodes = yield all(
-    res.map(fav =>{
-      const episodeKey = getEpisodeBaseKey(fav.site, fav.toon_id)
-      return call(getEpisodesApi, {
-         site:fav.site, 
-         toonId:fav.toon_id,
-         episodeKey: episodeKey
+  const res = yield call(
+    getToonRequest,
+    baseUrl + `favorite?weekday=${weekdaysEng[weekdayIndex]}`,
+    tokenDetail
+  )
+  if (!res.detail) {
+    const savedEpisodes = yield all(
+      res.map(fav => {
+        const episodeKey = getEpisodeBaseKey(fav.site, fav.toon_id)
+        return call(getEpisodesApi, {
+          site: fav.site,
+          toonId: fav.toon_id,
+          episodeKey: episodeKey,
         })
-    })
-  )
-  const flattenEpisodeList = Object.assign(...savedEpisodes)
-  const toonImageKeyLists = yield all(Object.keys(flattenEpisodeList).map(id => {
-      return call(getToonImagesApi, {
-        toonId: id,
-        episodeNo: flattenEpisodeList[id][0].no
       })
-    })
-  )
-  //update all episode
+    )
+    const flattenEpisodeList = Object.assign(...savedEpisodes)
+    const toonImageKeyLists = yield all(
+      Object.keys(flattenEpisodeList).map(id => {
+        return fork(getToonImagesApi, {
+          toonId: id,
+          episodeNo: flattenEpisodeList[id][0].no,
+        })
+      })
+    )
+    ToastAndroid.show('Done Updating', ToastAndroid.SHORT)
+  }
 }
+
+function* favoriteWatcher() {}
 
 // function* getToonImagesApi(action) {
 //   const { toonId, episodeNo } = action
