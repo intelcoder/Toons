@@ -3,7 +3,7 @@
  * @flow
  */
 import { urlTypes } from 'models/data'
-import secret from 'config/secret'
+import secret, { manageBaseUrl } from 'config/secret'
 import queryString from 'query-string'
 import moment from 'moment'
 
@@ -56,7 +56,7 @@ export const indexToweekday = index => {
 }
 
 export const createRequestUrl = (type = '', id = null, episode = null) => {
-  const baseUrl = secret.baseUrl
+  const baseUrl = manageBaseUrl.getBaseUrl()
   if (type == urlTypes.LIST) {
     return baseUrl
   } else if (type == urlTypes.EPISODE) {
