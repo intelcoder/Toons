@@ -133,14 +133,6 @@ class WebtoonPager extends Component {
       })
     }
   }
-  setActions = site => {
-    const actions = toolbarActions.filter(action => {
-      if (site !== action.title.toLowerCase()) return action
-    })
-    this.setState({
-      toolbarActions: actions,
-    })
-  }
   render() {
     const {site, webtoons} = this.props
     const isWebtoonExist = webtoons.length > 0

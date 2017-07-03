@@ -12,9 +12,7 @@ import {
   ToastAndroid,
 } from 'react-native'
 import React, { Component } from 'react'
-import moment from 'moment'
-
-import secret from 'Toons/src/config/secret'
+import {connect} from 'react-redux'
 import { vw, vh } from 'Toons/src/utils/styleHelper'
 import {
   Container,
@@ -28,12 +26,12 @@ import {
 } from 'native-base'
 import Icon from 'react-native-vector-icons/SimpleLineIcons'
 
-export default class Login extends Component {
+class Login extends Component {
   state = {
     id: 'fiddlesticks',
     pwd: 'Tjdwns!@3',
   }
-  handleOnPress = async () => {
+  handleOnPress = () => {
     this.props.onPress(this.state.id, this.state.pwd)
   }
   handleIdInput = text => {
@@ -43,9 +41,6 @@ export default class Login extends Component {
     if (text) this.setState({ pwd: text })
   }
   render() {
-    /*const {width, height, login} = this.props;
-      const {isFetching} = login;*/
-    const { width, height } = Dimensions.get('window')
     return (
       <Container>
         <Content>
@@ -67,16 +62,21 @@ export default class Login extends Component {
               />
             </Item>
           </Form>
-          <View style={{ alignItems: 'flex-end', padding: 10, marginTop: 20 }}>
+          <View style={styles.loginBtnContainer}>
             <Button
               block
               info
+              style={{
+                width: vw(30),
+                alignSelf: 'flex-end'
+
+              }}
               onPress={this.handleOnPress}
               accessibilityLabel="Press to login"
             >
               <Text>Login</Text>
-
             </Button>
+            <Text style={styles.errorText}>{this.props.error}</Text>
           </View>
 
         </Content>
@@ -84,6 +84,8 @@ export default class Login extends Component {
     )
   }
 }
+
+export default connect(state => ({...state.login}))(Login)
 
 const styles = StyleSheet.create({
   btnContainer: {
@@ -94,13 +96,14 @@ const styles = StyleSheet.create({
   },
 
   loginBtnContainer: {
-    position: 'relative',
-    width: vw(30),
-    zIndex: 1,
-    height: 40,
+    flex: 1,
+    alignItems: 'flex-end',
+    padding: 10,
+    marginTop: 20
   },
   activityIndicatorContainer: {
     position: 'absolute',
     top: 0,
   },
+  errorText: {color: 'red', paddingTop: 5}
 })

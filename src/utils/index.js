@@ -3,15 +3,14 @@
  * @flow
  */
 import { urlTypes } from 'models/data'
-import secret, { manageBaseUrl } from 'config/secret'
+import secret, { baseUrlManager } from 'config/secret'
 import queryString from 'query-string'
 import moment from 'moment'
-
 export * from 'utils/styleHelper'
 
-export const isTokenExpired = (tokenExpireAt, expiresIn) => {
-  if (tokenExpireAt) {
-    return tokenExpireAt + expiresIn > moment().unix()
+export const isTokenExpired = (tokenReceivedAt, expiresIn) => {
+  if (tokenReceivedAt) {
+    return tokenReceivedAt + expiresIn < moment().unix()
   }
   return true
 }
@@ -56,7 +55,7 @@ export const indexToweekday = index => {
 }
 
 export const createRequestUrl = (type = '', id = null, episode = null) => {
-  const baseUrl = manageBaseUrl.getBaseUrl()
+  const baseUrl = baseUrlManager.getWebtoonUrl()
   if (type == urlTypes.LIST) {
     return baseUrl
   } else if (type == urlTypes.EPISODE) {
@@ -68,7 +67,7 @@ export const createRequestUrl = (type = '', id = null, episode = null) => {
 }
 
 export const assembleUrl = (type, id = null, episode = null) => {
-  const baseUrl = secret.baseUrl
+  const baseUrl = baseUrlManager.getWebtoonUrl
   if (type == urlTypes.LIST) {
     return baseUrl
   } else if (type == urlTypes.EPISODE) {

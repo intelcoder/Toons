@@ -30,6 +30,7 @@ import {
   getToonImageApiSuccess,
   getToonImageApiFail,
   getEpisodesApiFail,
+  getEpisodesDbFail,
 } from 'redux/actions'
 import { defaultModel } from 'models/model'
 import { urlTypes, weekdaysEng } from 'models/data'
@@ -50,12 +51,12 @@ function* fetchData(action) {
 
 const dbFetchWebtoon = async site => {
   try {
-    const naverToonIds = await defaultModel.getByKey(site)
-    const webtoonKeys = naverToonIds.map(webtoonId => {
+    const webtoonIds = await defaultModel.getByKey(site)
+    const webtoonKeys = webtoonIds.map(webtoonId => {
       return [site, webtoonId].join(':')
     })
-    const naverToons = await defaultModel.getAllWithKeys(webtoonKeys)
-    return naverToons
+    const webtoons = await defaultModel.getAllWithKeys(webtoonKeys)
+    return webtoons
   } catch (e) {
     console.log('db site webtoon fetch fail ', e)
   }
@@ -63,8 +64,9 @@ const dbFetchWebtoon = async site => {
 
 const dbFetchEpisodes = async episodeKeys => {
   try {
-    const naverToons = await defaultModel.getAllWithKeys(episodeKeys)
-    return naverToons
+    const episodes = await defaultModel.getAllWithKeys(episodeKeys)
+
+    return episodes
   } catch (e) {
     console.log('db site webtoon fetch fail ', e)
   }
@@ -97,6 +99,7 @@ const saveEpisodeToDb = async (episodeBaseKey, toonId, episodes) => {
 function* fetchWebtoons(action) {
   const { site } = action
   const webtoons = yield call(dbFetchWebtoon, site)
+
   yield put(siteUpdated(site, webtoons))
 }
 
@@ -104,7 +107,10 @@ function* getEpisodesDb(action) {
   const { episodeKeys } = action
   const site = yield select(state => state.webtoon.site)
   const episodes = yield call(dbFetchEpisodes, episodeKeys)
-  yield put(getEpisodesDbSuccess(episodes))
+  if(episodes && episodes.length > 0){
+    return yield put(getEpisodesDbSuccess(episodes))
+  }
+  yield put(getEpisodesDbFail())
 }
 
 function* getEpisodesApi(action) {
@@ -165,16 +171,21 @@ function* getToonImagesApi(action) {
     toonId,
     episodeNo
   )
-  const result = yield call(getToonRequest, requestUrl, tokenDetail)
+  const { result, timeout } = yield race({
+    result: call(getToonRequest, requestUrl, tokenDetail),
+    timeout: call(delay, 1000),
+  })
 
-  const toonImageData = yield call(
-    saveToonImagesToDb,
-    toonId,
-    episodeNo,
-    result
-  )
   if (result) {
+    const toonImageData = yield call(
+      saveToonImagesToDb,
+      toonId,
+      episodeNo,
+      result
+    )
     yield put(getToonImageApiSuccess(toonImageData))
+  }else {
+    yield put(getToonImageApiFail())
   }
 }
 
@@ -248,7 +259,7 @@ function* updateAllFav() {
     const flattenEpisodeList = Object.assign(...savedEpisodes)
     const toonImageKeyLists = yield all(
       Object.keys(flattenEpisodeList).map(id => {
-        return fork(getToonImagesApi, {
+        return call(getToonImagesApi, {
           toonId: id,
           episodeNo: flattenEpisodeList[id][0].no,
         })
@@ -257,11 +268,6 @@ function* updateAllFav() {
     ToastAndroid.show('Done Updating', ToastAndroid.SHORT)
   }
 }
-
-function* favoriteWatcher() {}
-
-// function* getToonImagesApi(action) {
-//   const { toonId, episodeNo } = action
 export default all([
   fetchWebtoon(),
   fetchEpisodesApi(),
@@ -271,5 +277,5 @@ export default all([
   webtoonsUpdated(),
   episodesUpdated(),
   fetchToonImagesDb(),
-  fork(updateAllFavEpisodeToon),
+  updateAllFavEpisodeToon()
 ])

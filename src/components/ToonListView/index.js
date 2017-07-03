@@ -11,6 +11,7 @@ import {
   ListView,
   Dimensions,
 } from 'react-native'
+import AutoHeightImage from '../AutoHeightImage'
 
 export default class WebtoonView extends Component {
   constructor(props) {
@@ -26,14 +27,13 @@ export default class WebtoonView extends Component {
     const { toonImageList } = this.props
     return toonImageList.map((toonImage, index) => {
       return (
-        <Image
+        <AutoHeightImage
           key={toonImage.order + index}
           resizeMode={Image.resizeMode.contain}
-          source={{
-            uri: 'file://' + toonImage.image_url,
-            width: width,
-            height: height,
-          }}
+          uri={'file://' + toonImage.image_url}
+          width={width}
+          height={height}
+
         />
       )
     })

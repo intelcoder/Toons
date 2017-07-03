@@ -27,7 +27,7 @@ function createRequestTypes(base) {
 }
 
 function action(type, payload = {}) {
-  return {type, ...payload}
+  return { type, ...payload }
 }
 
 export const updateSite = makeActionCreator(SITE_UPDATE, 'site')
@@ -42,6 +42,7 @@ export const getEpisodesDbSuccess = makeActionCreator(
   GET_EPISODES_DB_SUCCESS,
   'episodes'
 )
+export const getEpisodesDbFail = makeActionCreator(GET_EPISODES_DB_FAIL,)
 
 const episodeApi = createRequestTypes(GET_EPISODES_API)
 
@@ -83,3 +84,12 @@ export const UPDATE_ALL_FAV_EPISODE_TOON_SUCCESS = 'UPDATE_ALL_FAV_EPISODE_TOON'
 export const UPDATE_ALL_FAV_EPISODE_TOON_FAIL = 'UPDATE_ALL_FAV_EPISODE_TOON'
 
 export const updateAllFav = makeActionCreator(UPDATE_ALL_FAV_EPISODE_TOON)
+
+export const TOGGLE_FAVORITE_API = 'TOGGLE_FAVORITE_API'
+export const TOGGLE_FAVORITE_API_SUCCESS = 'TOGGLE_FAVORITE_API_SUCCESS'
+export const TOGGLE_FAVORITE_API_FAIL = 'TOGGLE_FAVORITE_API_SUCCESS'
+
+export const toggleFavoriteApi = makeActionCreator(
+  TOGGLE_FAVORITE_API,
+  'toonId'
+)

@@ -19,7 +19,6 @@ export const fetchToken = async (id, pwd) => {
       password: pwd,
     }),
   }
-  console.log(baseUrlManager.getTokenUrl())
   const data = await fetch(baseUrlManager.getTokenUrl(), requestDetail)
   return data.json()
 }
