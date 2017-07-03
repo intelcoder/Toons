@@ -10,10 +10,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-@connect(state => ({
-  likeActivated: state.app.likeActivated
-}))
-export default class ToonCard extends Component {
+class ToonCard extends Component {
   state = {
     favoriteSelected: this.props.favorite,
   }
@@ -27,9 +24,10 @@ export default class ToonCard extends Component {
     }
   }
   shouldComponentUpdate(nextProps, nextState) {
-    const { likeActivated } = this.props
+    const { likeActivated, toon_id } = this.props
     const { favoriteSelected } = this.state
     if (
+      toon_id !== nextProps.toon_id ||
       likeActivated !== nextProps.likeActivated ||
       favoriteSelected !== nextState.favoriteSelected
     )
@@ -55,10 +53,7 @@ export default class ToonCard extends Component {
       >
         <View style={[styles.imageContainer]}>
           <View
-            style={[
-              styles.imageFilter,
-              { opacity: likeActivated ? 1 : 0 },
-            ]}
+            style={[styles.imageFilter, { opacity: likeActivated ? 1 : 0 }]}
           >
             <Icon
               name="check-circle"
@@ -128,3 +123,6 @@ const styles = StyleSheet.create({
     padding: 1,
   },
 })
+export default connect(state => ({
+  likeActivated: state.app.likeActivated,
+}))(ToonCard)
