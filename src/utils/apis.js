@@ -1,4 +1,5 @@
-import secret from 'app/config/secret'
+import secret, { baseUrlManager } from 'app/config/secret'
+
 import { ToastAndroid } from 'react-native'
 import { createRequestUrl } from 'utils'
 
@@ -7,7 +8,7 @@ const headers = {
 }
 
 export const fetchToken = async (id, pwd) => {
-  const { clientId, tokenUrl } = secret
+  const { clientId } = secret
   const requestDetail = {
     method: 'POST',
     headers: headers,
@@ -18,7 +19,9 @@ export const fetchToken = async (id, pwd) => {
       password: pwd,
     }),
   }
-  const data = await fetch(tokenUrl, requestDetail)
+
+  const data = await fetch(baseUrlManager.getTokenUrl(), requestDetail)
+  console.log('fetch toekn', data)
   return data.json()
 }
 
