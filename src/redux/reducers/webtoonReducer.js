@@ -8,10 +8,13 @@ import {
   WEBTOON_UPDATED,
   EPISODE_UPDATED,
   TOON_IMAGES_UPDATED,
+  GET_EPISODES_DB,
   GET_EPISODES_DB_SUCCESS,
+  GET_EPISODES_DB_FAIL,
   GET_TOON_IMAGES_API,
   GET_TOON_IMAGES_API_SUCCESS,
   GET_EPISODES_API_FAIL,
+  GET_TOON_IMAGES_API_FAIL,
 } from 'redux/types'
 
 const webtoonObj = siteList.reduce((acc, site) => {
@@ -20,7 +23,7 @@ const webtoonObj = siteList.reduce((acc, site) => {
 }, {})
 
 const initState = {
-  site: 'naver',
+  site: 'daum',
   selectedWebtoon: '',
   selectedEpisodes: '',
   webtoons: webtoonObj,
@@ -39,14 +42,24 @@ const webtoonReducer = createReducer(initState, {
   },
   [SITE_UPDATE_SUCCESS](state, action) {
     const { site, webtoons } = action
+
     return {
       ...state,
       isFetching: false,
       site: site,
       webtoons: {
         ...state.webtoons,
-        [site]: [...webtoons],
+        [site]: webtoons,
       },
+    }
+  },
+  [GET_EPISODES_DB](state, action) {
+    const {episodes} = action
+
+    return {
+      ...state,
+      episodes: [],
+      isFailed: false,
     }
   },
   [GET_EPISODES_DB_SUCCESS](state, action) {
@@ -55,6 +68,14 @@ const webtoonReducer = createReducer(initState, {
     return {
       ...state,
       episodes: episodes,
+    }
+  },
+  [GET_EPISODES_DB_FAIL](state, action) {
+    const {episodes} = action
+
+    return {
+      ...state,
+      isFailed: true,
     }
   },
   [GET_EPISODES_API_FAIL](state, action) {
@@ -84,6 +105,7 @@ const webtoonReducer = createReducer(initState, {
     const { episodeNo } = action
     return {
       ...state,
+      isFailed: false,
       toonImages: [],
     }
   },
@@ -92,6 +114,13 @@ const webtoonReducer = createReducer(initState, {
     return {
       ...state,
       toonImages: toonImageList,
+    }
+  },
+  [GET_TOON_IMAGES_API_FAIL](state, action) {
+    const { toonImageList } = action
+    return {
+      ...state,
+      isFailed: true,
     }
   },
 })
