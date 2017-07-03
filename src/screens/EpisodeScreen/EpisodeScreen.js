@@ -36,12 +36,11 @@ export default class EpisodePage extends Component {
 
   //site:pk:ep - list of episode
   componentDidMount() {
-    console.log(this.props)
     this.onLoad()
   }
 
   onLoad = async () => {
-    const { site, toonId, isConnected, isTokenValid } = this.props
+    const { site, toonId, isTokenValid } = this.props
     const epBaseKey = [site, toonId, 'ep'].join(':')
     let episodeKeys = await defaultModel.getByKey(epBaseKey)
 
