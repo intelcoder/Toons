@@ -46,10 +46,6 @@ class LoginScreen extends Component {
   }
 
   render() {
-
-    const {status} = this.props.login
-
-    console.log(this.props)
     return (
       <View style={{flex: 1}}>
         <Login onPress={this.handleOnPress}/>
