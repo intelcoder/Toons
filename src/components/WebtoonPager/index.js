@@ -133,6 +133,14 @@ class WebtoonPager extends Component {
       })
     }
   }
+  setActions = site => {
+    const actions = toolbarActions.filter(action => {
+      if (site !== action.title.toLowerCase()) return action
+    })
+    this.setState({
+      toolbarActions: actions,
+    })
+  }
   render() {
     const {site, webtoons} = this.props
     const isWebtoonExist = webtoons.length > 0
@@ -190,6 +198,7 @@ const styles = StyleSheet.create({
 const toolbarActions = [
   { title: 'Naver' },
   { title: 'Daum' },
+  { title: 'Kakao' },
   {
     title: 'FavSync',
     show: 'always',
