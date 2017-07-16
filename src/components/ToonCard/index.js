@@ -70,16 +70,13 @@ class ToonCard extends Component {
 
         <View style={styles.textContainer}>
           <Text
-            style={{
-              flex: 1,
-            }}
             numberOfLines={1}
             style={styles.title}
           >
             {title}
           </Text>
           <Text style={styles.rating}>{rating}</Text>
-          <Text style={styles.author}>{author}</Text>
+          <Text style={styles.author} numberOfLines={1}>{author}</Text>
         </View>
       </TouchableOpacity>
     )
@@ -106,6 +103,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   title: {
+   
     marginTop: 3,
     fontWeight: 'bold',
   },
