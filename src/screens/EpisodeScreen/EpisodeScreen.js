@@ -5,14 +5,10 @@ import React, { Component } from 'react'
 import { View, Text, ListView, ToolbarAndroid, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import difference from 'lodash.difference'
 
 import EpisodeList from 'components/EpisodeList'
-import {createSelector} from 'reselect'
-import secret from 'config/secret'
 import { defaultModel } from 'models/model'
 import { isTokenValid, extractValueFromObjArray } from 'utils'
-import { saveEpisodeImage } from 'utils/saveImage'
 import { getEpisodesDb, getEpisodesApi, episodeSelected } from 'redux/actions'
 import {BasicSpinner} from 'components'
 /*
@@ -84,11 +80,13 @@ export default class EpisodePage extends Component {
               handleClick={this.handleClick}
         />
       )
+    }else {
+      if(!isFailed){
+        return <BasicSpinner/>
+      }
+      return <Text>No Episode Available</Text>
     }
-    if(!isFailed){
-      return <BasicSpinner/>
-    }
-   
+
   }
 
   render() {
