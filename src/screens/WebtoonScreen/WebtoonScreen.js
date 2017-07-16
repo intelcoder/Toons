@@ -48,6 +48,7 @@ class WebtoonScreen extends Component {
     const token = await  defaultModel.getByKey('TOKEN')
     if(token && isTokenValid(token)){
       this.props.getCachedToken(token)
+      return token
     }
   }
 
@@ -58,14 +59,20 @@ class WebtoonScreen extends Component {
   }
 
   initOrFetchStart = async () => {
+    const token = await  defaultModel.getByKey('TOKEN')
     const { site } = this.props
-    //Later on naver will be fetched from user config
-    const naverToonIds = await defaultModel.getByKey(site)
-    if (naverToonIds) {
-      this.props.updateSite(site)
-    } else {
-      this.props.startInit()
+    if(token && isTokenValid(token)){
+      const naverToonIds = await defaultModel.getByKey(site)
+      if (naverToonIds) {
+        this.props.updateSite(site)
+      } else {
+        this.props.startInit()
+      }
+    }else {
+      this.props.navigation.navigate('Login')
     }
+    //Later on naver will be fetched from user config
+
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.initStatus === INIT_SUCCESS) {
