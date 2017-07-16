@@ -4,8 +4,9 @@ export const urlTypes = {
   LIST: 'list',
   EPISODE: 'episode',
   TOON_IMAGE: 'toonImage',
-} //@todo Add rezin and kakao later
-export const siteList = ['naver', 'daum']
+}
+
+export const siteList = ['naver', 'daum', 'kakao']
 export const netState = {
   ONLINE: 'online',
   OFFLINE: 'offline',
