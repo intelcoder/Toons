@@ -117,11 +117,12 @@ function* getEpisodesApi(action) {
   const { site, toonId, episodeKey } = action
   const tokenDetail = yield select(state => state.login.tokenDetail)
   const requestUrl = yield call(createRequestUrl, urlTypes.EPISODE, toonId)
-  const { result, timeout } = yield race({
+  const { result, _ } = yield race({
     result: call(getToonRequest, requestUrl, tokenDetail),
     timeout: call(delay, 1000),
   })
-  if (result) {
+
+  if (result.episodes) {
     const savedEpisodes = yield call(
       saveEpisodeToDb,
       episodeKey,
